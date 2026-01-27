@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('subject');
             $table->text('note');
             $table->date('date');
-            $table->time('start-time');
-            $table->time('end-time');
+            $table->time('start_time');
+            $table->time('end_time');
             $table->timestamps();
         });
     }

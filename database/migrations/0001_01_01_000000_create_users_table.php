@@ -25,7 +25,7 @@ return new class extends Migration
             $table->boolean('availability')->default(1);
             $table->text('about')->nullable();
             $table->string('experience')->nullable();
-            $table->foreignId('team_id')->constrained('teams')->onDelete(null);
+            $table->foreignId('team_id')->nullable()->constrained('teams')->onDelete('cascade');
             $table->rememberToken();
             $table->timestamps();
         });
