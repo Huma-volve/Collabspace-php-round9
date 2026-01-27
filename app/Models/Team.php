@@ -3,12 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Team extends Model
 {
-    
+
+    public function leader(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'leader_id');
+    }
 
     public function users(): HasMany
     {
