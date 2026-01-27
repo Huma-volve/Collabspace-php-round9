@@ -19,7 +19,7 @@ trait ApiResponse
     public function error($msg){
         return response()->json([
             'msg'=>$msg,
-            'status'=>'400'
+            'status'=>400
         ]);
     }
     public function returndata($msg,$data){
