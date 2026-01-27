@@ -7,8 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
+
 class Project extends Model
 {
+
+protected $guarded = [];
     public function files(): MorphMany {
         return $this->morphMany(File::class, 'fileable');
     }
@@ -19,5 +22,9 @@ class Project extends Model
 
     public function teams(): BelongsToMany {
         return $this->belongsToMany(Team::class);
+    }
+
+    public function getStatusTextAttribute(){
+        return $this->status==0?'active':'done';
     }
 }
