@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Comment extends Model
 {
+protected $guarded = [];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
