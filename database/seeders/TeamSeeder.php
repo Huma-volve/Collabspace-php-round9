@@ -12,22 +12,21 @@ class TeamSeeder extends Seeder
     {
         // نفترض إن عندك users متعملين قبل كده
         $admin = User::where('role', 'admin')->first();
-        $employee1 = User::where('role', 'employee')->first();
-        $employee2 = User::where('role', 'employee')->skip(1)->first();
+        $employees = User::where('role', 'employee')->take(2)->get();
 
-        Team::insert([
-            [
-                'name' => 'Design Team',
-                'leader_id' => $admin?->id,
-            ],
-            [
-                'name' => 'Development Team',
-                'leader_id' => $employee1?->id,
-            ],
-            [
-                'name' => 'QA Team',
-                'leader_id' => $employee2?->id,
-            ],
+        Team::create([
+            'name' => 'Design Team',
+            'leader_id' => $admin?->id,
+        ]);
+
+        Team::create([
+            'name' => 'Development Team',
+            'leader_id' => $employees->get(0)?->id,
+        ]);
+
+        Team::create([
+            'name' => 'QA Team',
+            'leader_id' => $employees->get(1)?->id,
         ]);
     }
 }

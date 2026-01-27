@@ -6,11 +6,19 @@ use Illuminate\Database\Seeder;
 use App\Models\File;
 use App\Models\Project;
 use App\Models\Task;
+use App\Models\User;
 
 class FileSeeder extends Seeder
 {
     public function run(): void
     {
+        // نجيب كل اليوزرز
+        $users = User::pluck('id')->toArray();
+
+        if (empty($users)) {
+            return;
+        }
+
         // Files مرتبطة بـ Projects
         $project = Project::first();
 
@@ -19,12 +27,14 @@ class FileSeeder extends Seeder
                 'url' => 'files/project-specs.pdf',
                 'fileable_id' => $project->id,
                 'fileable_type' => Project::class,
+                'uploaded_by' => fake()->randomElement($users),
             ]);
 
             File::create([
                 'url' => 'files/ui-design.fig',
                 'fileable_id' => $project->id,
                 'fileable_type' => Project::class,
+                'uploaded_by' => fake()->randomElement($users),
             ]);
         }
 
@@ -36,6 +46,7 @@ class FileSeeder extends Seeder
                 'url' => 'files/task-requirements.docx',
                 'fileable_id' => $task->id,
                 'fileable_type' => Task::class,
+                'uploaded_by' => fake()->randomElement($users),
             ]);
         }
     }

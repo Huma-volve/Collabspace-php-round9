@@ -15,4 +15,4 @@ Route::get('/user', function (Request $request) {
     Route::get('/dashboard/meetings', [ApiDashboardController::class, 'upcomingMeetings']);
     Route::get('/dashboard/teams', [ApiDashboardController::class, 'teams']);
     Route::get('/dashboard/files', [ApiDashboardController::class, 'files']);
-    Route::get('/dashboard/tasks/daily_completion', [ApiDashboardController::class, 'dailyTasksCompletionRate']);
+    Route::get('/dashboard/tasks/tasksCompletionRateByDeadline', [ApiDashboardController::class, 'tasksCompletionRateByDeadline']);
