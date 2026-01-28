@@ -13,7 +13,11 @@ class TaskController extends Controller
      */
     public function index(Request $request)
     {
-        $tasks = Task::query();
+        $tasks = Task::with([
+            'project',
+            'comments',
+            'files',
+        ])->latest();
 
         if ($request->filled('search')) {
             $tasks->whereFullText(['name', 'description'], $request->search);
@@ -37,7 +41,7 @@ class TaskController extends Controller
 
         $validated['priority'] ??= 'low';
         $validated['status'] ??= 'todo';
-        // $validated['project_id'] ??= null;
+
 
         $task = Task::create($validated);
 
@@ -52,7 +56,13 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        //
+        $task->load([
+            'project',
+            'comments',
+            'comments.user', // لو الكومنت له يوزر
+            'files',
+        ]);
+        return response()->json($task);
     }
 
     /**
