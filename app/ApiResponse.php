@@ -13,4 +13,13 @@ trait ApiResponse
             'data' => $data,
         ], $status);
     }
+    public function error($message, $status = 400)
+    {
+        return response()->json([
+            'success' => false,
+            'code' => $status,
+            'message' => $message,
+            
+        ], $status);
+    }
 }

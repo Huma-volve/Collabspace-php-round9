@@ -19,4 +19,8 @@ protected $fillable = [
     {
         return $this->belongsToMany(User::class);
     }
+    public function comments()
+    {
+        return $this->hasMany(CommentMeeting::class);
+    }
 }
