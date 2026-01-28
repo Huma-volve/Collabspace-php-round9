@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreTaskRequest;
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class TaskController extends Controller
 {
@@ -37,17 +38,26 @@ class TaskController extends Controller
      */
     public function store(StoreTaskRequest $request)
     {
-        $validated = $request->validated();
+        $taskData = $request->except('files');
 
-        $validated['priority'] ??= 'low';
-        $validated['status'] ??= 'todo';
+        $task = Task::create($taskData);
+
+        if ($request->hasFile('files')) {
+            foreach ($request->file('files') as $file) {
+
+                $path = $file->store('tasks', 'public');
+
+                $task->files()->create([
+                    'url' => Storage::url($path),
+                ]);
+            }
+        }
 
 
-        $task = Task::create($validated);
 
         return response()->json([
             'message' => 'This task created successfully',
-            'data' => $task,
+            'data' => $task->load('files'),
         ], 201);
     }
 
