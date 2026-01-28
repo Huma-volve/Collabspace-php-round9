@@ -15,3 +15,17 @@ route::prefix('meeting')->group(function(){
     route::post('/comment',[MeetingController::class,'comment']);
     route::get('/comments/{meetingId}',[MeetingController::class,'getComments']);
 });
+use App\Http\Controllers\ChatController;
+use App\Http\Controllers\MessageController;
+
+
+// Chat Routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/chats', [ChatController::class, 'index']);
+    
+    Route::post('/chats', [ChatController::class, 'store']);
+    
+    Route::get('/chats/{chat}/messages', [MessageController::class, 'index']);
+    
+    Route::post('/chats/{chat}/messages', [MessageController::class, 'store']);
+});
