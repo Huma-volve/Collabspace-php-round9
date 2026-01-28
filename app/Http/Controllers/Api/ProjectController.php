@@ -20,47 +20,24 @@ class ProjectController extends Controller
     }
     public function index()
     {
-        $projects = Project::all();
+        $projects = Project::with('teams')->withCount('files')->get();
         if ($projects->isEmpty()) {
             return $this->error('No projects found at the moment.');
         }
         return $this->success('All projects retrieved successfully.', $projects);
     }
+
+
+
     public function show($id)
     {
-        $project = Project::find($id);
-        if (! $project) {
-            return $this->error('Project not found.');
-        }
-
-        return $this->success('Project retrieved successfully.', $project);
-    }
-
-    public function getProjectsWithteams()
-    {
-        $projects = Project::with('teams')->get();
-        if ($projects->isEmpty()) {
-            return $this->error('No projects with teams found.');
-        }
-        return $this->success('Projects with their teams retrieved successfully.', $projects);
-    }
-    public function getOneProjectWithteam($id)
-    {
-        $project = Project::with('teams')->find($id);
+        $project = Project::with('teams')->withCount('files')->find($id);
         if (! $project) {
             return $this->error('Project not found.');
         }
         return $this->success('Project with its team retrieved successfully.',$project);
     }
-    public function destroy($id)
-    {
-        $project = Project::find($id);
-        if (! $project) {
-            return $this->error('Project not found, nothing to delete.');
-        }
-        $project->delete();
-        return $this->success('Project deleted successfully');
-    }
+
     public function storeFiles(FileRequest $request, $id)
     {
         $validated = $request->validated();
