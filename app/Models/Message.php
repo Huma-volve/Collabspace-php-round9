@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Message extends Model
 {
+    protected $guarded = [];
+
     public function chat(): BelongsTo
     {
         return $this->belongsTo(Chat::class);

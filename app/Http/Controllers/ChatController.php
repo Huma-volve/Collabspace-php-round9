@@ -5,19 +5,23 @@ namespace App\Http\Controllers;
 use App\Models\Chat;
 use App\Models\User;
 use App\Http\Resources\ChatResource;
+use App\Traits\MockAuth;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ChatController extends Controller
 {
+    use MockAuth, ApiResponse;
     /**
      * Get all chats for the authenticated user
      */
     public function index()
     {
-        $chats = auth()->user()->chats()
+        $chats = $this->getAuthUser()->chats()
             ->with([
-                'users:id,name,email',
+                'users:id,full_name,image,experience,team_id',
+                'users.team:id,name',
                 'messages' => function ($query) {
                     $query->latest()->limit(1);
                 }
@@ -25,7 +29,10 @@ class ChatController extends Controller
             ->latest('updated_at')
             ->get();
 
-        return ChatResource::collection($chats);
+        return $this->successResponse(
+            ChatResource::collection($chats),
+            'Chats retrieved successfully'
+        );
     }
 
     /**
@@ -34,23 +41,33 @@ class ChatController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'receiver_id' => 'required|exists:users,id|different:' . auth()->id()
+            'receiver_id' => 'required|exists:users,id|different:' . $this->getAuthUserId()
         ]);
 
-        $currentUser = auth()->user();
+        $currentUser = $this->getAuthUser();
         $receiverId = $request->receiver_id;
+        if($currentUser->id == $receiverId){
+            return $this->errorResponse('You cannot chat with yourself', 400);
+        }
 
         // Find existing chat between the 2 users
         $chat = $this->findExistingChat($currentUser->id, $receiverId);
 
         if ($chat) {
-            return new ChatResource($chat->load('users'));
+            return $this->successResponse(
+                new ChatResource($chat), 
+                'Chat already exists'
+            );
         }
 
         // Create new chat if none exists
         $chat = $this->createNewChat($currentUser, $receiverId);
 
-        return new ChatResource($chat);
+        return $this->successResponse(
+            new ChatResource($chat),
+            'Chat created successfully',
+            201
+        );
     }
 
     /**
@@ -64,6 +81,13 @@ class ChatController extends Controller
             ->whereHas('users', function ($query) use ($userId2) {
                 $query->where('user_id', $userId2);
             })
+            ->with([
+                'users:id,full_name,image,experience,team_id',
+                'users.team:id,name',
+                'messages' => function ($query) {
+                    $query->latest()->limit(1);
+                }
+            ])
             ->first();
     }
 
@@ -78,7 +102,6 @@ class ChatController extends Controller
             $receiver = User::findOrFail($receiverId);
 
             $chat = Chat::create([
-                'user_name_at_chat' => $receiver->name
             ]);
 
             // Attach both users to the chat
