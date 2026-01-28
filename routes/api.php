@@ -13,8 +13,5 @@ Route::controller(ProjectController::class)->prefix('projects')->group(function(
     Route::post('/','store');
     Route::get('/','index');
     Route::get('/{id}','show');
-    Route::get('/with-teams','getProjectsWithteams');
-    Route::get('/{id}/team','getOneProjectWithteam');
-    Route::get('/{id}/delete','destroy');
     Route::post('/{id}/files','storeFiles');
 });
