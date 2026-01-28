@@ -4,28 +4,26 @@ namespace App\Trait;
 
 trait ApiResponse
 {
-    public function success($msg){
-        return response()->json([
-            'msg'=>$msg,
-            'status'=>200
-        ]);
+ 
+     public function success(string $message, $data = null, int $status = 200)
+    {
+        $response = [
+            'message' => $message,
+            'status'  => $status,
+        ];
+
+        if (!is_null($data)) {
+            $response['data'] = $data;
+        }
+
+        return response()->json($response, $status);
     }
-    public function create($msg){
+
+    public function error(string $message, int $status = 404)
+    {
         return response()->json([
-            'msg'=>$msg,
-            'status'=>201
-        ]);
-    }
-    public function error($msg){
-        return response()->json([
-            'msg'=>$msg,
-            'status'=>400
-        ]);
-    }
-    public function returndata($msg,$data){
-        return response()->json([
-            'msg'=>$msg,
-            'data'=>$data,
-        ]);
+            'message' => $message,
+            'status'  => $status,
+        ], $status);
     }
 }

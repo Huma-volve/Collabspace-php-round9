@@ -16,7 +16,7 @@ class ProjectController extends Controller
         $validated = $request->validated();
 
         Project::create($validated);
-        return $this->create('Project has been added successfully');
+        return $this->success('Project has been added successfully',null,201);
     }
     public function index()
     {
@@ -24,7 +24,7 @@ class ProjectController extends Controller
         if ($projects->isEmpty()) {
             return $this->error('No projects found at the moment.');
         }
-        return $this->returndata('All projects retrieved successfully.', $projects);
+        return $this->success('All projects retrieved successfully.', $projects);
     }
     public function show($id)
     {
@@ -33,7 +33,7 @@ class ProjectController extends Controller
             return $this->error('Project not found.');
         }
 
-        return $this->returndata('Project retrieved successfully.', $project);
+        return $this->success('Project retrieved successfully.', $project);
     }
 
     public function getProjectsWithteams()
@@ -42,15 +42,15 @@ class ProjectController extends Controller
         if ($projects->isEmpty()) {
             return $this->error('No projects with teams found.');
         }
-        return $this->returndata('Projects with their teams retrieved successfully.', $projects);
+        return $this->success('Projects with their teams retrieved successfully.', $projects);
     }
     public function getOneProjectWithteam($id)
     {
-        $project = Project::with('teams', 'files')->find($id);
+        $project = Project::with('teams')->find($id);
         if (! $project) {
             return $this->error('Project not found.');
         }
-        return $this->success('Project with its team retrieved successfully.');
+        return $this->success('Project with its team retrieved successfully.',$project);
     }
     public function destroy($id)
     {
@@ -81,6 +81,6 @@ class ProjectController extends Controller
             ]));
         }
 
-        return $this->create('File Uploaded Successfully');
+        return $this->success('File Uploaded Successfully',null,201);
     }
 }
