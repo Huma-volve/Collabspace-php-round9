@@ -1,5 +1,6 @@
 <?php
 
+<<<<<<< HEAD
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ApiDashboardController;
@@ -16,3 +17,19 @@ Route::get('/user', function (Request $request) {
     Route::get('/dashboard/teams', [ApiDashboardController::class, 'teams']);
     Route::get('/dashboard/files', [ApiDashboardController::class, 'files']);
     Route::get('/dashboard/tasks/tasksCompletionRateByDeadline', [ApiDashboardController::class, 'tasksCompletionRateByDeadline']);
+=======
+use App\Http\Controllers\ChatController;
+use App\Http\Controllers\MessageController;
+use Illuminate\Support\Facades\Route;
+
+// Chat Routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/chats', [ChatController::class, 'index']);
+    
+    Route::post('/chats', [ChatController::class, 'store']);
+    
+    Route::get('/chats/{chat}/messages', [MessageController::class, 'index']);
+    
+    Route::post('/chats/{chat}/messages', [MessageController::class, 'store']);
+});
+>>>>>>> origin/main
