@@ -1,12 +1,24 @@
 <?php
 
-use App\Http\Controllers\TaskController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\ProjectController;
+use App\Http\Controllers\TaskController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\API\MeetingController;
 
+Route::get('/user', function (Request $request) {
+    return $request->user();
+})->middleware('auth:sanctum');
+
+
+Route::controller(ProjectController::class)->prefix('projects')->group(function(){
+    Route::post('/','store');
+    Route::get('/','index');
+    Route::get('/{id}','show');
+    Route::post('/{id}/files','storeFiles');
+});
 Route::get('/tasks',[TaskController::class,'index']);
 Route::post('/task',[TaskController::class,'store']);
 
@@ -24,6 +36,7 @@ route::prefix('meeting')->group(function(){
     route::post('/comment',[MeetingController::class,'comment']);
     route::get('/comments/{meetingId}',[MeetingController::class,'getComments']);
 });
+
 
 
 // Chat Routes
