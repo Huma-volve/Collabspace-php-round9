@@ -76,4 +76,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Message::class);
     }
+    public function commentMeetings(): HasMany
+    {
+        return $this->hasMany(CommentMeeting::class);
+    }
 }
