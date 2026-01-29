@@ -25,7 +25,7 @@ return new class extends Migration
             $table->boolean('availability')->default(1);
             $table->text('about')->nullable();
             $table->enum('experience', ['junior','mid','senior']);
-            $table->integer('experience_year')->nullable();
+            $table->string('experience_year')->nullable();
             $table->foreignId('team_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
