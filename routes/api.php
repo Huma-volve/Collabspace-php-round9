@@ -20,6 +20,7 @@ Route::controller(ProjectController::class)->prefix('projects')->group(function(
     Route::post('/{id}/files','storeFiles');
 });
 Route::get('/tasks',[TaskController::class,'index']);
+Route::get('tasks/search', [TaskController::class, 'searchAnyTask']);
 Route::post('/task',[TaskController::class,'store']);
 
 

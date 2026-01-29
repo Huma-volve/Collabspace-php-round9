@@ -78,9 +78,20 @@ class TaskController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Task $task)
+
+    public function searchAnyTask(Request $request)
     {
-        //
+
+        $request->validate([
+            'q' => 'required|string|min:2',
+        ]);
+        $q = $request->query('q'); 
+
+        $tasks = Task::whereFullText(['name', 'description'], $q)->with('files')->get();
+
+        return response()->json([
+            'data' => $tasks
+        ]);
     }
 
     /**
