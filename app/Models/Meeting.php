@@ -8,8 +8,19 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Meeting extends Model
 {
 
+protected $fillable = [
+        'subject',
+        'date',
+        'note',
+        'start_time',
+         'end_time',
+    ];
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class);
+    }
+    public function comments()
+    {
+        return $this->hasMany(CommentMeeting::class);
     }
 }

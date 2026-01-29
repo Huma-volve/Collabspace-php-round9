@@ -24,8 +24,9 @@ return new class extends Migration
             $table->boolean('status')->default(1);
             $table->boolean('availability')->default(1);
             $table->text('about')->nullable();
-            $table->string('experience')->nullable();
-            $table->foreignId('team_id')->nullable()->constrained('teams')->onDelete('cascade');
+            $table->enum('experience', ['junior','mid','senior']);
+            $table->string('experience_year')->nullable();
+            $table->foreignId('team_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

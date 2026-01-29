@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Team extends Model
 {
+    protected $fillable = ['name', 'leader_id'];
 
     public function leader(): BelongsTo
     {
