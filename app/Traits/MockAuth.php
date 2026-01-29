@@ -25,7 +25,7 @@ trait MockAuth
         // For testing, we'll return the first user or create a mock one
         
         // Option 1: Return first user from database
-        return User::find(1);
+        return User::find(2);
         
         // Option 2: Return specific user by ID
         // return User::find(1);

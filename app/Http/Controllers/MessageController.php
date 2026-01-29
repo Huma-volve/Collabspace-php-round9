@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MessageSent;
 use App\Models\Chat;
 use App\Http\Resources\MessageResource;
 use App\Traits\MockAuth;
@@ -52,8 +53,14 @@ class MessageController extends Controller
             'created_at' => now()
         ]);
 
+        // Load relationships for the event
+        $message->load('user:id,full_name,image');
+
+        // 🚀 Broadcast the event to other users
+        broadcast(new MessageSent($message))->toOthers(); // toOthers مش بتشتغل مع public channel
+
         return $this->successResponse(
-            new MessageResource($message->load('user')),
+            new MessageResource($message),
             'Message sent successfully',
             201
         );
