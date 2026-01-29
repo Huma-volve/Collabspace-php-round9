@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Team;
 use App\Models\User;
-
 class TeamSeeder extends Seeder
 {
     public function run(): void
@@ -27,6 +26,22 @@ class TeamSeeder extends Seeder
         Team::create([
             'name' => 'QA Team',
             'leader_id' => $employees->get(1)?->id,
+        ]);
+        //new
+
+         $ahmed = User::where('email', 'ahmed@example.com')->first();
+        $sara = User::where('email', 'sara@example.com')->first();
+
+        // Team 1: Backend Team (Ahmed is leader)
+        Team::create([
+            'name' => 'Backend Team',
+            'leader_id' => $ahmed->id,
+        ]);
+
+        // Team 2: Frontend Team (Sara is leader)
+        Team::create([
+            'name' => 'Frontend Team',
+            'leader_id' => $sara->id,
         ]);
     }
 }

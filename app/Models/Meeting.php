@@ -18,4 +18,8 @@ protected $guarded = [];
         'start_time' => 'datetime:H:i',
         'end_time' => 'datetime:H:i',
     ];
+    public function comments()
+    {
+        return $this->hasMany(CommentMeeting::class);
+    }
 }
