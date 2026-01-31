@@ -3,72 +3,34 @@
 <head>
     <title>WebSocket Test</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <style>
-        body { 
-            font-family: Arial; 
-            max-width: 600px; 
-            margin: 50px auto; 
-            padding: 20px;
-        }
-        #status { 
-            padding: 10px; 
-            margin-bottom: 20px; 
-            border-radius: 5px;
-        }
-        .connected { background: #d4edda; color: #155724; }
-        .disconnected { background: #f8d7da; color: #721c24; }
-        
-        #messages { 
-            border: 1px solid #ddd; 
-            height: 300px; 
-            overflow-y: auto; 
-            padding: 10px; 
-            margin-bottom: 20px;
-            background: #f9f9f9;
-        }
-        .message { 
-            padding: 8px; 
-            margin: 5px 0; 
-            background: white; 
-            border-radius: 5px;
-        }
-        .own { 
-            background: #e3f2fd; 
-            text-align: right;
-        }
-        input { 
-            width: 70%; 
-            padding: 10px; 
-            border: 1px solid #ddd;
-        }
-        button { 
-            padding: 10px 20px; 
-            background: #007bff; 
-            color: white; 
-            border: none;
-            cursor: pointer;
-        }
-    </style>
 </head>
-<body>
-    <h1>Real-time Chat Test</h1>
-    
-    <!-- Connection Status -->
-    <div id="status" class="disconnected">❌ Disconnected</div>
-    
-    <!-- Messages Container -->
-    <div id="messages"></div>
-    
-    <!-- Send Form -->
-    <form id="form">
-        <input type="text" id="input" placeholder="Type message..." required>
-        <button type="submit">Send</button>
-    </form>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-2xl font-bold mb-4">Real-time Chat Test</h1>
+        
+        <!-- Connection Status -->
+        <div id="status" class="p-3 mb-4 rounded-lg bg-red-100 text-red-700 font-medium">
+            ❌ Disconnected
+        </div>
+        
+        <!-- Messages Container -->
+        <div id="messages" class="h-96 overflow-y-auto p-4 mb-4 bg-white rounded-lg shadow border border-gray-200 flex flex-col gap-3"></div>
+        
+        <!-- Send Form -->
+        <form id="form" class="flex gap-2">
+            <input type="text" id="input" placeholder="Type message..." required 
+                   class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button type="submit" 
+                    class="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                Send
+            </button>
+        </form>
+    </div>
 
     <script type="module">
 
         const CHAT_ID = 1;         
-        const USER_ID = 2;         
+        const USER_ID = 1;         
         
         const statusDiv = document.getElementById('status');
         const messagesDiv = document.getElementById('messages');
@@ -78,11 +40,11 @@
 
         function updateStatus(connected) {
             if (connected) {
-                statusDiv.className = 'connected';
-                statusDiv.textContent = 'Connected';
+                statusDiv.className = 'p-3 mb-4 rounded-lg bg-green-100 text-green-700 font-medium transition-colors duration-300';
+                statusDiv.textContent = '✅ Connected';
             } else {
-                statusDiv.className = 'disconnected';
-                statusDiv.textContent = 'Disconnected';
+                statusDiv.className = 'p-3 mb-4 rounded-lg bg-red-100 text-red-700 font-medium transition-colors duration-300';
+                statusDiv.textContent = '❌ Disconnected';
             }
         }
         
@@ -103,13 +65,22 @@
         // دالة: إضافة رسالة للشاشة
         function addMessage(msg, isOwn) {
             const div = document.createElement('div');
-            div.className = 'message' + (isOwn ? ' own' : '');
+            
+            // Base classes
+            const baseClasses = 'max-w-[80%] p-3 rounded-lg shadow-sm';
+            // Specific classes based on sender
+            const ownClasses = 'bg-blue-100 self-end text-right';
+            const otherClasses = 'bg-gray-50 self-start text-left border border-gray-200';
+            
+            div.className = `${baseClasses} ${isOwn ? ownClasses : otherClasses}`;
             
             const time = new Date(msg.created_at).toLocaleTimeString();
+            
+            // Message content
             div.innerHTML = `
-                <strong>${msg.sender.full_name}</strong><br>
-                ${msg.body}<br>
-                <small style="color: #666">${time}</small>
+                <div class="font-bold text-sm mb-1 ${isOwn ? 'text-blue-800' : 'text-gray-800'}">${msg.sender.full_name}</div>
+                <div class="text-gray-800">${msg.body}</div>
+                <div class="text-xs text-gray-500 mt-1">${time}</div>
             `;
             
             messagesDiv.appendChild(div);
@@ -121,18 +92,12 @@
             .listen('.message.sent', (e) => {
                 console.log('📨 Message received:', e.message);
                 
-                // تجاهل الرسائل اللي بعتها انت (عشان toOthers مش شغال مع public channel)
-                if (e.message.user_id === USER_ID) {
-                    console.log('⏭️ Ignoring own message');
-                    return;
-                }
-                
                 addMessage(e.message, false);
             })
             .error((error) => {
-              console.log('Failed to connect to WebSocket');
-              console.error('❌ Error:', error); // بيظهر error هنا 
-              updateStatus(false); 
+                console.log('Failed to connect to WebSocket');
+                console.error('❌ Error:', error);
+                updateStatus(false); 
             });
 
         // إرسال رسالة جديدة
@@ -165,9 +130,7 @@
             }
         });
 
-        // ========================================
         // تحميل الرسائل القديمة
-        // ========================================
         async function loadMessages() {
             try {
                 const response = await fetch(`/api/chats/${CHAT_ID}/messages`);
@@ -175,7 +138,7 @@
 
                 if (data.success && data.data.length > 0) {
                     data.data.forEach(msg => {
-                        addMessage(msg, msg.user_id === USER_ID);
+                        addMessage(msg, msg.sender.id === USER_ID);
                     });
                 }
             } catch (error) {

@@ -9,6 +9,6 @@ use Illuminate\Support\Facades\Broadcast;
 // });
 
 
-Broadcast::channel('chat.{chatId}', function () {
-    return true; // السماح للجميع بالدخول للتجربة
+Broadcast::channel('chat.{chatId}', function ($user, $chatId) {
+    return Chat::find($chatId)?->users->contains($user->id) ?? false;
 });

@@ -44,7 +44,7 @@ class MessageController extends Controller
         }
 
         $request->validate([
-            'body' => 'required|string|max:2000'
+            'body' => 'required|string|min:1|max:2000'
         ]);
 
         $message = $chat->messages()->create([
