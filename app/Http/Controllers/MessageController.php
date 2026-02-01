@@ -24,11 +24,11 @@ class MessageController extends Controller
 
         $messages = $chat->messages()
             ->with('user:id,full_name')
-            ->orderBy('created_at', 'asc')
-            ->get();
+            ->orderBy('created_at', 'desc')
+            ->cursorPaginate(10);
 
         return $this->successResponse(
-            MessageResource::collection($messages),
+            MessageResource::collection($messages), // منا عندى Resource لازم يستخدمه
             'Messages retrieved successfully'
         );
     }

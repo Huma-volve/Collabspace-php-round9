@@ -30,13 +30,18 @@
     <script type="module">
 
         const CHAT_ID = 1;         
-        const USER_ID = 1;         
+        const USER_ID = 2;         
         
         const statusDiv = document.getElementById('status');
         const messagesDiv = document.getElementById('messages');
         const form = document.getElementById('form');
         const input = document.getElementById('input');
 
+        // Cursor Pagination state
+        let nextCursor = null;
+        let hasMore = false;
+        let isLoading = false;
+        let isInitialLoad = true;
 
         function updateStatus(connected) {
             if (connected) {
@@ -60,10 +65,8 @@
         });
         console.log('🔌 Connecting to WebSocket...');
 
-
-
         // دالة: إضافة رسالة للشاشة
-        function addMessage(msg, isOwn) {
+        function addMessage(msg, isOwn, prepend = false) {
             const div = document.createElement('div');
             
             // Base classes
@@ -83,8 +86,17 @@
                 <div class="text-xs text-gray-500 mt-1">${time}</div>
             `;
             
-            messagesDiv.appendChild(div);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            // إضافة في البداية أو النهاية حسب الحاجة
+            if (prepend) {
+                messagesDiv.insertBefore(div, messagesDiv.firstChild);
+            } else {
+                messagesDiv.appendChild(div);
+            }
+            
+            // Scroll to bottom only if not prepending
+            if (!prepend) {
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
         }
 
         
@@ -130,21 +142,59 @@
             }
         });
 
-        // تحميل الرسائل القديمة
-        async function loadMessages() {
+        // تحميل الرسائل (مع دعم cursor pagination)
+        async function loadMessages(cursor = null) {
+            if (isLoading) return;
+            
+            isLoading = true;
             try {
-                const response = await fetch(`/api/chats/${CHAT_ID}/messages`);
-                const data = await response.json();
-
-                if (data.success && data.data.length > 0) {
-                    data.data.forEach(msg => {
-                        addMessage(msg, msg.sender.id === USER_ID);
-                    });
+                // بناء الـ URL مع cursor إذا كان موجود
+                let url = `/api/chats/${CHAT_ID}/messages`;
+                if (cursor) {
+                    url += `?cursor=${encodeURIComponent(cursor)}`;
+                }
+                
+                const response = await fetch(url);
+                const result = await response.json();
+                
+                if (result.success && result.data && result.data.length > 0) {
+                    // حفظ معلومات cursor pagination
+                    if (result.pagination) {
+                        nextCursor = result.pagination.next_cursor;
+                        hasMore = result.pagination.has_more;
+                        console.log(`📄 Loaded ${result.data.length} messages, has_more: ${hasMore}`);
+                    }
+                    
+                    const messages = result.data.reverse();
+                    
+                    if (isInitialLoad) {
+                        messages.forEach(msg => {
+                            addMessage(msg, msg.sender.id === USER_ID);
+                        });
+                        isInitialLoad = false;
+                    } else {
+                        const oldScrollHeight = messagesDiv.scrollHeight;
+                        messages.forEach(msg => {
+                            addMessage(msg, msg.sender.id === USER_ID, true);
+                        });
+                        
+                        messagesDiv.scrollTop = messagesDiv.scrollHeight - oldScrollHeight;
+                    }
                 }
             } catch (error) {
                 console.error('❌ Failed to load messages:', error);
+            } finally {
+                isLoading = false;
             }
         }
+
+        messagesDiv.addEventListener('scroll', () => {
+            // لو وصلنا لأعلى الشات وفيه رسائل أكتر
+            if (messagesDiv.scrollTop === 0 && hasMore && !isLoading) {
+                console.log('🔄 Loading more messages with cursor:', nextCursor);
+                loadMessages(nextCursor);
+            }
+        });
 
         loadMessages();
     </script>
