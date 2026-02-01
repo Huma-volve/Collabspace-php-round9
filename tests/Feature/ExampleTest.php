@@ -1,7 +1,23 @@
 <?php
 
-test('the application returns a successful response', function () {
-    $response = $this->get('/');
+namespace Tests\Feature;
 
-    $response->assertStatus(200);
-});
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+class ExampleTest extends TestCase
+{
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed();
+    }
+
+    public function test_user_count_is_zero()
+    {
+        $this->assertEquals(3, \App\Models\User::count());
+    }
+}

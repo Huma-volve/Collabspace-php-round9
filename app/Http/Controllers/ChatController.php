@@ -101,8 +101,7 @@ class ChatController extends Controller
         try {
             $receiver = User::findOrFail($receiverId);
 
-            $chat = Chat::create([
-            ]);
+            $chat = Chat::create();
 
             // Attach both users to the chat
             $chat->users()->attach([$currentUser->id, $receiverId]);

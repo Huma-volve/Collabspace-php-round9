@@ -49,9 +49,11 @@ class MessageController extends Controller
 
         $message = $chat->messages()->create([
             'body' => $request->body,
-            'user_id' => $this->getAuthUserId(),
-            'created_at' => now()
         ]);
+
+        $message->user_id = $this->getAuthUserId();
+        $message->created_at = now();
+        $message->save();
 
         // Load relationships for the event
         $message->load('user:id,full_name,image');
