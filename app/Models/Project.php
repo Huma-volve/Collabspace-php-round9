@@ -11,10 +11,8 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Project extends Model
 {
-  use HasFactory;
-
-protected $guarded = [];
-    
+    use HasFactory;
+protected $guarded = [];    
     public function files(): MorphMany {
         return $this->morphMany(File::class, 'fileable');
     }

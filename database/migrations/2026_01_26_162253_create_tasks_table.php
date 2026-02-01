@@ -20,7 +20,8 @@ return new class extends Migration
             $table->enum('priority',['high','medium','low'])->default('low');
             $table->enum('status',['todo','progress','review','completed'])->default('todo');
             $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
-            $table->fullText(['name', 'description']);// to search
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
+            $table->index(['name', 'description']);// to search
             $table->timestamps();
         });
     }

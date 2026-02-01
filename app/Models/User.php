@@ -76,6 +76,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Message::class);
     }
+    public function uploadedFiles(): HasMany
+    {
+        return $this->hasMany(File::class, 'uploaded_by');
+    }
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
     public function commentMeetings(): HasMany
     {
         return $this->hasMany(CommentMeeting::class);

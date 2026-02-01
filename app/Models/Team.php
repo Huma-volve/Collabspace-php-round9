@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Team extends Model
 {
-    protected $fillable = ['name', 'leader_id'];
+    use HasFactory;
+    protected $guarded = [];
 
     public function leader(): BelongsTo
     {

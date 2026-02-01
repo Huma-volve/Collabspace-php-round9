@@ -9,24 +9,23 @@ use App\Models\Task;
 use App\Models\Comment;
 use Illuminate\Support\Facades\Hash;
 
+
 class DatabaseSeeder extends Seeder
 {
     /**
      * Seed the application's database.
      */
     public function run(): void
-    {
-        // Run seeders in correct order:
-        // 1. Create users first
-        $this->call(UserSeeder::class);
-        
-        // 2. Create teams (needs users as leaders)
-        $this->call(TeamSeeder::class);
-        
-        // 3. Create chats
-        $this->call(ChatSeeder::class);
-        
-        // 4. Create messages
-        $this->call(MessageSeeder::class);
-    }
+{
+    $this->call([
+        UserSeeder::class,
+        TeamSeeder::class,
+        ProjectSeeder::class,
+        TaskSeeder::class,
+        ProjectTeamSeeder::class,
+        MeetingSeeder::class,
+        FileSeeder::class,
+    ]);
+}
+
 }
