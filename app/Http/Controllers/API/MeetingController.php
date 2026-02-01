@@ -21,6 +21,9 @@ class MeetingController extends Controller
     public function index()
     {
         $meetings = Meeting::with('users')->get();
+        if($meetings->isEmpty()){
+            return $this->success([],'No meetings found',200);
+        }
         return $this->success(MeetingResource::collection($meetings),
             'Meetings retrieved successfully', 200);
     }
