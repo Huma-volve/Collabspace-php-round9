@@ -11,7 +11,6 @@ use App\Models\User;
 
 
 test('Add_Projects',function(){
-    $this->withoutExceptionHandling();
 $data=Project::factory()->make()->toArray();
 $response=$this->post('/api/projects',$data);
 
