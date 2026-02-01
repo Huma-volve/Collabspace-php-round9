@@ -15,7 +15,10 @@ Route::controller(ProjectController::class)->prefix('projects')->group(function(
     Route::get('/','index');
     Route::get('/{id}','show')->name('show');
     Route::post('/{id}/files','storeFiles');
-    Route::get('/{id}/getfiles','getprojectwithfiles');
+    Route::get('/{id}/getprojectwithtasks','getprojectwithtasks');
+    Route::get('/{id}/getprojectwithteams','getprojectwithteams');
+    Route::get('/{id}/getprojectwithfiles','getprojectwithfiles');
+
 });
 
 

@@ -64,6 +64,9 @@ class ProjectController extends Controller
         return $this->success('File Uploaded Successfully',null,201);
     }
 
+
+
+    
     public function getprojectwithtasks($id){
         $project=Project::find($id);
          if(!$project){
