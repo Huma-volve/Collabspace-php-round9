@@ -7,18 +7,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Meeting extends Model
 {
+protected $guarded = [];
 
-protected $fillable = [
-        'subject',
-        'date',
-        'note',
-        'start_time',
-         'end_time',
-    ];
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class);
     }
+     protected $casts = [
+        'date' => 'date',
+        'start_time' => 'datetime:H:i',
+        'end_time' => 'datetime:H:i',
+    ];
     public function comments()
     {
         return $this->hasMany(CommentMeeting::class);
