@@ -22,6 +22,8 @@ Route::get('/user', function (Request $request) {
     Route::get('/dashboard/files', [ApiDashboardController::class, 'files']);
     Route::get('/dashboard/tasks/tasksCompletionRateByDeadline', [ApiDashboardController::class, 'tasksCompletionRateByDeadline']);
    
+    Route::get('/dashboard/projectsOverview', [ApiDashboardController::class, 'projectsOverview']);
+
     Route::controller(ProjectController::class)->prefix('projects')->group(function(){
     Route::post('/','store');
     Route::get('/','index');

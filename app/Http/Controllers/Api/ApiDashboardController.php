@@ -293,4 +293,51 @@ class ApiDashboardController extends Controller
             );
         }
     }
+public function projectsOverview(Request $request)
+{
+    try {
+        $year  = (int) $request->query('year', now()->year);
+        $month = $request->query('month'); // اختياري
+
+        // 🟢 per year
+        $perYear = Project::whereYear('created_at', $year)->count();
+
+        // 🟢 per month (داخل السنة)
+        $perMonth = Project::selectRaw('MONTH(created_at) as month, COUNT(*) as total')
+            ->whereYear('created_at', $year)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->pluck('total', 'month');
+
+        // 🟢 per day
+        if ($month) {
+            // أيام شهر معين
+            $perDay = Project::selectRaw('DAY(created_at) as day, COUNT(*) as total')
+                ->whereYear('created_at', $year)
+                ->whereMonth('created_at', $month)
+                ->groupBy('day')
+                ->orderBy('day')
+                ->pluck('total', 'day');
+        } else {
+            // اليوم الحالي فقط
+            $perDay = Project::whereDate('created_at', now()->toDateString())->count();
+        }
+
+        return $this->success([
+            'year'      => $year,
+            'per_year'  => $perYear,
+            'per_month' => $perMonth,
+            'per_day'   => $perDay,
+        ], 'Projects overview fetched successfully');
+
+    } catch (\Throwable $e) {
+        return $this->error(
+            'Failed to fetch projects overview',
+            ['exception' => $e->getMessage()],
+            500
+        );
+    }
+}
+
+
 }
