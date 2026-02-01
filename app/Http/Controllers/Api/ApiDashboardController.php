@@ -299,17 +299,19 @@ public function projectsOverview(Request $request)
         $year  = (int) $request->query('year', now()->year);
         $month = $request->query('month'); // اختياري
 
-        // 🟢 per year
+        //  per year
         $perYear = Project::whereYear('created_at', $year)->count();
 
-        // 🟢 per month (داخل السنة)
-        $perMonth = Project::selectRaw('MONTH(created_at) as month, COUNT(*) as total')
-            ->whereYear('created_at', $year)
-            ->groupBy('month')
-            ->orderBy('month')
-            ->pluck('total', 'month');
+        //  per month (داخل السنة)
+       //  per month (متوافق مع SQLite)
+$perMonth = Project::selectRaw("strftime('%m', created_at) as month, COUNT(*) as total")
+    ->whereYear('created_at', $year)
+    ->groupBy('month')
+    ->orderBy('month')
+    ->pluck('total', 'month');
 
-        // 🟢 per day
+
+        //  per day
         if ($month) {
             // أيام شهر معين
             $perDay = Project::selectRaw('DAY(created_at) as day, COUNT(*) as total')
