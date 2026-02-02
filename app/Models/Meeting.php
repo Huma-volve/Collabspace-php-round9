@@ -24,6 +24,11 @@ protected $fillable = [
     {
         return $this->belongsToMany(User::class);
     }
+     protected $casts = [
+        'date' => 'date',
+        'start_time' => 'datetime:H:i',
+        'end_time' => 'datetime:H:i',
+    ];
     public function comments()
     {
         return $this->hasMany(CommentMeeting::class);

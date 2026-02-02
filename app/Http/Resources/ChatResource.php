@@ -16,13 +16,14 @@ class ChatResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->user_name_at_chat,
             'users' => $this->whenLoaded('users', function () {
                 return $this->users->map(function ($user) {
                     return [
                         'id' => $user->id,
-                        'name' => $user->name,
-                        'email' => $user->email,
+                        'name' => $user->full_name,
+                        'image' => $user->image,
+                        'experience' => $user->experience,
+                        'team_name' => $user->team?->name,
                     ];
                 });
             }),

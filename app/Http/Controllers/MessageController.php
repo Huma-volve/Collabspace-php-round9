@@ -4,28 +4,32 @@ namespace App\Http\Controllers;
 
 use App\Models\Chat;
 use App\Http\Resources\MessageResource;
+use App\Traits\MockAuth;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 
 class MessageController extends Controller
 {
+    use MockAuth, ApiResponse;
     /**
      * Get all messages from a specific chat
      */
     public function index(Chat $chat)
     {
         // Verify user is member of the chat
-        if (!$chat->users->contains(auth()->id())) {
-            return response()->json([
-                'message' => 'Unauthorized. You are not a member of this chat.'
-            ], 403);
+        if (!$chat->users->contains($this->getAuthUserId())) {
+            return $this->forbiddenResponse('You are not a member of this chat.');
         }
 
         $messages = $chat->messages()
-            ->with('user:id,name,email')
+            ->with('user:id,full_name')
             ->orderBy('created_at', 'asc')
             ->get();
 
-        return MessageResource::collection($messages);
+        return $this->successResponse(
+            MessageResource::collection($messages),
+            'Messages retrieved successfully'
+        );
     }
 
     /**
@@ -34,10 +38,8 @@ class MessageController extends Controller
     public function store(Request $request, Chat $chat)
     {
         // Verify user is member of the chat
-        if (!$chat->users->contains(auth()->id())) {
-            return response()->json([
-                'message' => 'Unauthorized. You are not a member of this chat.'
-            ], 403);
+        if (!$chat->users->contains($this->getAuthUserId())) {
+            return $this->forbiddenResponse('You are not a member of this chat.');
         }
 
         $request->validate([
@@ -46,10 +48,14 @@ class MessageController extends Controller
 
         $message = $chat->messages()->create([
             'body' => $request->body,
-            'user_id' => auth()->id(),
+            'user_id' => $this->getAuthUserId(),
             'created_at' => now()
         ]);
 
-        return new MessageResource($message->load('user'));
+        return $this->successResponse(
+            new MessageResource($message->load('user')),
+            'Message sent successfully',
+            201
+        );
     }
 }
