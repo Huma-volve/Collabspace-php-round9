@@ -2,15 +2,22 @@
 
 namespace Database\Seeders;
 
+
+use App\Models\Task;
 use App\Models\User;
+use App\Models\Comment;
 use App\Models\Project;
+
+
 use Illuminate\Database\Seeder;
+use Database\Seeders\ProjectSeeder;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
     /**
      * Seed the application's database.
      */
@@ -23,5 +30,17 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
        Project::factory(10)->create();
-    }
+
+
+    $this->call([
+        UserSeeder::class,
+        TeamSeeder::class,
+        ProjectSeeder::class,
+        TaskSeeder::class,
+        ProjectTeamSeeder::class,
+        MeetingSeeder::class,
+        FileSeeder::class,
+    ]);
+}
+
 }

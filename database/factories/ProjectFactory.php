@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+<<<<<<< HEAD
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -26,6 +27,40 @@ class ProjectFactory extends Factory
             'end_date'=>$end_date->format('Y-m-d'),
             'priority'=>fake()->randomElement(['high','medium','low']),
             'status'=>fake()->boolean()
+=======
+use App\Models\Project;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Carbon\Carbon;
+
+class ProjectFactory extends Factory
+{
+    protected $model = Project::class;
+
+    public function definition(): array
+    {
+        $startDate = Carbon::now()->subDays(rand(1, 10));
+        $endDate   = (clone $startDate)->addDays(rand(5, 20));
+
+        return [
+            'name'        => $this->faker->sentence(3),
+            'description' => $this->faker->paragraph,
+            'type'        => $this->faker->randomElement([
+                'web',
+                'mobile',
+                'desktop',
+                'api'
+            ]),
+            'start_date'  => $startDate->toDateString(),
+            'end_date'    => $endDate->toDateString(),
+            'priority'    => $this->faker->randomElement([
+                'high',
+                'medium',
+                'low'
+            ]),
+            'status'      => 1,
+            'created_at'  => now(),
+            'updated_at'  => now(),
+>>>>>>> eb1bad058b5eb4d8b6aa8f300c223845fdeff7a2
         ];
     }
 }
