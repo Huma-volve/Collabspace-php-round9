@@ -11,10 +11,14 @@ class Meeting extends Model
    use HasFactory;
 protected $fillable = [
         'subject',
-        'date',
         'note',
-        'start_time',
-         'end_time',
+        'date',    
+        'start_time',  
+     //   'end_time',    
+        'duration',    
+        'zoom_meeting_id',
+        'join_url',        
+       // 'start_url',       
     ];
     public function users(): BelongsToMany
     {
@@ -23,5 +27,11 @@ protected $fillable = [
     public function comments()
     {
         return $this->hasMany(CommentMeeting::class);
+    }
+    public function calculateEndTime()
+    {
+        $start = \Carbon\Carbon::createFromFormat('H:i', $this->start_time);
+        $end = $start->copy()->addMinutes($this->duration);
+        return $end->format('H:i');
     }
 }

@@ -10,6 +10,8 @@ use App\Http\Resources\CommentMeetingResource;
 use App\Http\Resources\MeetingResource;
 use App\Models\CommentMeeting;
 use App\Models\Meeting;
+use App\Services\ZoomMeetingService;
+use App\Services\ZoomTokenService;
 use Illuminate\Http\Request;
 
 class MeetingController extends Controller
@@ -31,20 +33,81 @@ class MeetingController extends Controller
     /**
      * Store a newly created resource in storage.
      */
- public function store(MeetingRequest $request)
+public function store(MeetingRequest $request, ZoomMeetingService $zoomService)
 {
     $data = $request->validated();
-
-    $users = $data['users'];
+    $users = $data['users'] ?? [];
     unset($data['users']);
 
-    $meeting = Meeting::create($data);
-    $meeting->users()->attach($users);
+    try {
+        $zoomData = [
+            'topic' => $data['subject'],
+            'start_time' => $data['date'] . 'T' . $data['start_time'],
+            'duration' => isset($data['duration']) ? $data['duration'] : 30,
+            'agenda' => $data['note'] ?? '',
+        ];
 
-    return $this->success(new MeetingResource($meeting->load('users')),
-        'Meeting created successfully', 201);
+$zoomMeeting = $zoomService->createMeeting($zoomData);
 
+        
+        $data['zoom_meeting_id'] = $zoomMeeting['id'] ?? null;
+        $data['join_url'] = $zoomMeeting['join_url'] ?? null;
+        //$data['start_url'] = $zoomMeeting['start_url'] ?? null;
+        $data['duration'] = $zoomData['duration'];
+
+       
+        $meeting = Meeting::create($data);
+
+        if (!empty($users)) {
+            $meeting->users()->attach($users);
+        }
+
+        return $this->success(
+            new MeetingResource($meeting->load('users')),
+            'Meeting created successfully',
+            201
+        );
+
+    } catch (\Exception $e) {
+        return $this->error(
+            'Failed to create meeting: ' . $e->getMessage(),
+            500
+        );
+    }
 }
+
+//  public function store(MeetingRequest $request)
+// {
+//     $data = $request->validated();
+
+//     $users = $data['users'];
+//     unset($data['users']);
+
+//     $meeting = Meeting::create($data);
+//     $meeting->users()->attach($users);
+
+//     return $this->success(new MeetingResource($meeting->load('users')),
+//         'Meeting created successfully', 201);
+
+// }
+
+
+public function testZoomToken(ZoomTokenService $zoomTokenService)
+{
+    try {
+        $token = $zoomTokenService->getAccessToken();
+        return response()->json([
+            'success' => true,
+            'token' => $token
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => $e->getMessage()
+        ], 500);
+    }
+}
+
 
 
     /**
