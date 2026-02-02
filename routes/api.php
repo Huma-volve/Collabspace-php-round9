@@ -21,7 +21,7 @@ Route::get('/user', function (Request $request) {
     Route::get('/dashboard/teams', [ApiDashboardController::class, 'teams']);
     Route::get('/dashboard/files', [ApiDashboardController::class, 'files']);
     Route::get('/dashboard/tasks/tasksCompletionRateByDeadline', [ApiDashboardController::class, 'tasksCompletionRateByDeadline']);
-   
+
     Route::get('/dashboard/projectsOverview', [ApiDashboardController::class, 'projectsOverview']);
 
     Route::controller(ProjectController::class)->prefix('projects')->group(function(){
@@ -32,8 +32,10 @@ Route::get('/user', function (Request $request) {
 });
 
 Route::get('/tasks',[TaskController::class,'index']);
+Route::post('/task', [TaskController::class, 'store']);
 Route::get('tasks/search', [TaskController::class, 'searchAnyTask']);
-Route::post('/task',[TaskController::class,'store']);
+Route::get('/task/{task}',[TaskController::class,'show']);
+
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();

@@ -23,7 +23,6 @@ class TaskController extends Controller
 
 
         return TaskResource::collection($tasks);
-
     }
 
 
@@ -67,7 +66,6 @@ class TaskController extends Controller
             'files',
         ]);
         return new TaskResource($task);
-
     }
 
     /**
@@ -82,10 +80,11 @@ class TaskController extends Controller
         ]);
         $q = $request->query('q');
 
-        $tasks = Task::whereFullText(['name', 'description'], $q)->with('files')->get();
-
+        $tasks = Task::where('name', 'like', "%{$q}%")
+            ->orWhere('description', 'like', "%{$q}%")
+            ->with('files')
+            ->get();
         return TaskResource::collection($tasks);
-
     }
 
     /**
