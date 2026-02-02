@@ -17,7 +17,7 @@ class ProjectSeeder extends Seeder
 
     public function run(): void
     {
-        Project::factory(10)->create();
+        
         Project::insert([
             [
                 'name' => 'Website Redesign',
