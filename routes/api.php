@@ -29,12 +29,12 @@ Route::get('/user', function (Request $request) {
     Route::post('/','store');
     Route::get('/','index');
     Route::get('/{id}','show')->name('show');
-    Route::get('/{id}','show');
     Route::post('/{id}/files','storeFiles');
     Route::get('/{id}/getprojectwithtasks','getprojectwithtasks');
     Route::get('/{id}/getprojectwithteams','getprojectwithteams');
     Route::get('/{id}/getprojectwithfiles','getprojectwithfiles');
-
+    Route::post('/{id}/addteamstoprojects','addteamstoprojects');
+ Route::get('/{id}/teamswithproject','teamswithproject');
 });
 
 

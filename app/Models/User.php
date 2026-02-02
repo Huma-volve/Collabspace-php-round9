@@ -28,6 +28,10 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+public function getNameAttribute()
+{
+    return $this->full_name;
+}
     protected $hidden = [
         'password',
         'remember_token',
