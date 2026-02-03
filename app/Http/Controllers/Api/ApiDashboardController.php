@@ -12,6 +12,7 @@ use App\Models\File;
 use Carbon\Carbon;
 use App\Traits\ApiResponser;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 class ApiDashboardController extends Controller
 {
     use ApiResponser;
@@ -278,54 +279,57 @@ class ApiDashboardController extends Controller
     /* ===============================
        FILES
     =============================== */
-    public function files()
-    {
-        try {
-            // أحدث 5 ملفات مرفوعة + اليوزر + الحاجة التابعة ليها
-            $files = File::with(['uploader', 'fileable'])
-                ->latest()
-                ->take(5)
-                ->get()
-                ->transform(function ($file) {
-                  // اسم العنصر اللي الفايل تابع ليه
-                    $attachedName = null;
+public function files()
+{
+    try {
+        // أحدث 5 ملفات مرفوعة + اليوزر + الحاجة التابعة ليها
+        $files = File::with(['uploader', 'fileable'])
+            ->latest()
+            ->take(5)
+            ->get()
+            ->transform(function ($file) {
 
-                    if ($file->fileable) {
-                        if ($file->fileable instanceof Project) {
-                            $attachedName = $file->fileable->name;
-                        } elseif ($file->fileable instanceof Task) {
-                            $attachedName = $file->fileable->name;
-                        } elseif ($file->fileable instanceof Meeting) {
-                            $attachedName = $file->fileable->subject;
-                        }
+                // اسم العنصر اللي الفايل تابع ليه
+                $attachedName = null;
+
+                if ($file->fileable) {
+                    if ($file->fileable instanceof Project) {
+                        $attachedName = $file->fileable->name;
+                    } elseif ($file->fileable instanceof Task) {
+                        $attachedName = $file->fileable->name;
+                    } elseif ($file->fileable instanceof Meeting) {
+                        $attachedName = $file->fileable->subject;
                     }
+                }
 
-                    return [
-                        'id' => $file->id,
-                        'file_name' => basename($file->url),
-                        'file_type' => strtoupper(pathinfo($file->url, PATHINFO_EXTENSION)),
-                        'attached_to' => class_basename($file->fileable_type),
-                        // اسم المشروع / التاسك / الميتنج
-                        'attached_name' => $attachedName,
-                        'uploaded_at' => $file->created_at->format('d M Y'),
-                        'uploaded_by' => $file->uploader?->full_name,
-                        'url' => $file->url,
-                    ];
-                });
+                return [
+                    'id' => $file->id,
+                    'file_name' => basename($file->url),
+                    'file_type' => strtoupper(pathinfo($file->url, PATHINFO_EXTENSION)),
+                    'attached_to' => class_basename($file->fileable_type),
+                    'attached_name' => $attachedName,
+                    'uploaded_at' => $file->created_at->format('d M Y'),
+                    'uploaded_by' => $file->uploader?->full_name,
 
-            return $this->success(
-                $files,
-                'Recent files fetched successfully'
-            );
+                    //  ده الصح
+                    'url' => route('files.download', $file->id),
+                ];
+            });
 
-        } catch (\Throwable $e) {
-            return $this->error(
-                'Failed to fetch files',
-                ['exception' => $e->getMessage()],
-                500
-            );
-        }
+        return $this->success(
+            $files,
+            'Recent files fetched successfully'
+        );
+
+    } catch (\Throwable $e) {
+        return $this->error(
+            'Failed to fetch files',
+            ['exception' => $e->getMessage()],
+            500
+        );
     }
+}
+
 public function projectsOverview(Request $request)
 {
     try {
@@ -402,4 +406,6 @@ public function projectsOverview(Request $request)
         );
     }
 }
+
+
 }

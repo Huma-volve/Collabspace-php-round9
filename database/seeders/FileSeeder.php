@@ -7,11 +7,17 @@ use App\Models\File;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 
 class FileSeeder extends Seeder
 {
     public function run(): void
     {
+
+Storage::put('files/project-specs.pdf', 'Dummy PDF content');
+Storage::put('files/ui-design.fig', 'Dummy Figma content');
+Storage::put('files/task-requirements.docx', 'Dummy Doc content');
+
         // نجيب كل اليوزرز
         $users = User::pluck('id')->toArray();
 

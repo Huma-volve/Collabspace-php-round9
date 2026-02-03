@@ -8,7 +8,7 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\API\MeetingController;
-
+use App\Http\Controllers\Api\ApiFileController;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
@@ -21,7 +21,9 @@ Route::get('/user', function (Request $request) {
     Route::get('/dashboard/teams', [ApiDashboardController::class, 'teams']);
     Route::get('/dashboard/files', [ApiDashboardController::class, 'files']);
     Route::get('/dashboard/tasks/tasksCompletionRateByDeadline', [ApiDashboardController::class, 'tasksCompletionRateByDeadline']);
-   
+    Route::get('/files/{file}/download', [ApiFileController::class, 'download'])
+    ->name('files.download');
+
     Route::get('/dashboard/projectsOverview', [ApiDashboardController::class, 'projectsOverview']);
 
     Route::controller(ProjectController::class)->prefix('projects')->group(function(){

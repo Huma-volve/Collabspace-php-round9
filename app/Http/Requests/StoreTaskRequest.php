@@ -22,15 +22,15 @@ class StoreTaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'          => ['required', 'string', 'max:255'],
-            'description'   => ['required', 'string'],
-            'start_date'    => ['required', 'date'],
-            'end_date'      => ['required', 'date', 'after_or_equal:start_date'],
-            'priority'      => ['nullable', 'in:high,medium,low'],
-            'status'        => ['nullable', 'in:todo,progress,review,completed'],
-            'project_id'    => ['required', 'exists:projects,id'],
-            'files'         => ['nullable', 'array'],
-            'files.*'       => ['file','mimes:jpg,jpeg,png,webp,pdf', 'max:5120'],
+            'name'          => 'required|string| max:255',
+            'description'   => 'required|string',
+            'start_date'    => 'required|date',
+            'end_date'      => 'required|date|after_or_equal:start_date',
+            'priority'      => 'nullable|in:high,medium,low',
+            'status'        => 'nullable|in:todo,progress,review,completed',
+            'project_id'    => 'required|exists:projects,id',
+            'files'         => 'nullable|array',
+            'files.*'       => 'file|mimes:jpg,jpeg,png,webp,pdf|max:5120',
         ];
     }
 }
