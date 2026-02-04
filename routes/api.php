@@ -48,4 +48,6 @@ route::prefix('meeting')->group(function(){
     Route::get('/chats/{chat}/messages', [MessageController::class, 'index']);
 
     Route::post('/chats/{chat}/messages', [MessageController::class, 'store']);
+
+    Route::post('/chats/{chat}/typing', [MessageController::class, 'typing']);
 // });

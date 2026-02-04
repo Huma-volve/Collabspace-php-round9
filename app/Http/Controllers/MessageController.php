@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Events\MessageSent;
+use App\Events\UserTyping;
 use App\Models\Chat;
+use App\Models\User;
 use App\Http\Resources\MessageResource;
 use App\Traits\MockAuth;
 use App\Traits\ApiResponse;
@@ -58,13 +60,35 @@ class MessageController extends Controller
         // Load relationships for the event
         $message->load('user:id,full_name,image');
 
-        // 🚀 Broadcast the event to other users
-        broadcast(new MessageSent($message))->toOthers(); // toOthers مش بتشتغل مع public channel
+        broadcast(new MessageSent($message))->toOthers();
 
         return $this->successResponse(
             new MessageResource($message),
             'Message sent successfully',
             201
+        );
+    }
+
+    /**
+     * Broadcast typing indicator
+     */
+    public function typing(Request $request, Chat $chat)
+    {
+        $request->validate([
+            'is_typing' => 'required|boolean'
+        ]);
+
+        $user = User::find($this->getAuthUserId());
+
+        broadcast(new UserTyping(
+            $chat->id,
+            $user,
+            $request->is_typing
+        ));
+
+        return $this->successResponse(
+            null,
+            'Typing status broadcasted'
         );
     }
 }

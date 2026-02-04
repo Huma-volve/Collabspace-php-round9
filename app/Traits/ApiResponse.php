@@ -34,10 +34,9 @@ trait ApiResponse
             $paginator = $data->resource;
             $response['data'] = $data->resolve();
             $response['pagination'] = [
-                'per_page' => $paginator->perPage(),
                 'next_cursor' => $paginator->nextCursor()?->encode(),
                 'prev_cursor' => $paginator->previousCursor()?->encode(),
-                'has_more' => $paginator->hasMorePages(),
+                'has_more' => $paginator->nextCursor() !== null,
             ];
 
             return response()->json($response, $code);

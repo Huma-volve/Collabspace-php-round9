@@ -16,6 +16,11 @@
         <!-- Messages Container -->
         <div id="messages" class="h-96 overflow-y-auto p-4 mb-4 bg-white rounded-lg shadow border border-gray-200 flex flex-col gap-3"></div>
         
+        <!-- Typing Indicator -->
+        <div id="typing-indicator" class="hidden p-2 mb-2 text-gray-500 text-sm italic">
+            <span id="typing-text"></span>
+        </div>
+        
         <!-- Send Form -->
         <form id="form" class="flex gap-2">
             <input type="text" id="input" placeholder="Type message..." required 
@@ -99,6 +104,49 @@
             }
         }
 
+        // Typing indicator state
+        let typingTimer;
+        const typingDelay = 1000;
+        let isTyping = false;
+        const typingIndicator = document.getElementById('typing-indicator');
+        const typingText = document.getElementById('typing-text');
+        const typingUsers = new Map();
+
+        // Function: Send typing status
+        async function sendTypingStatus(typing) {
+            try {
+                await fetch(`/api/chats/${CHAT_ID}/typing`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ is_typing: typing })
+                });
+            } catch (error) {
+                console.error('❌ Failed to send typing status:', error);
+            }
+        }
+
+        // Function: Update typing indicator display
+        function updateTypingIndicator() {
+            if (typingUsers.size === 0) {
+                typingIndicator.classList.add('hidden');
+                return;
+            }
+            
+            const names = Array.from(typingUsers.values());
+            let text = '';
+            
+            if (names.length === 1) {
+                text = `${names[0]} is typing...`;
+            } else if (names.length === 2) {
+                text = `${names[0]} and ${names[1]} are typing...`;
+            } else {
+                text = `${names[0]} and ${names.length - 1} others are typing...`;
+            }
+            
+            typingText.textContent = text;
+            typingIndicator.classList.remove('hidden');
+        }
+
         
         window.Echo.channel(`chat.${CHAT_ID}`)
             .listen('.message.sent', (e) => {
@@ -106,11 +154,44 @@
                 
                 addMessage(e.message, false);
             })
+            .listen('.user.typing', (e) => { 
+                console.log('👀 Typing event:', e); // ال console ده دقيق
+                
+                if (e.is_typing) {
+                    typingUsers.set(e.user.id, e.user.name);
+                    
+                    setTimeout(() => {
+                        typingUsers.delete(e.user.id);
+                        updateTypingIndicator();
+                    }, 3000);
+                } else {
+                    typingUsers.delete(e.user.id);
+                }
+                
+                updateTypingIndicator();
+            })
             .error((error) => {
                 console.log('Failed to connect to WebSocket');
                 console.error('❌ Error:', error);
                 updateStatus(false); 
             });
+
+        // Handle input typing
+        input.addEventListener('input', () => {
+            clearTimeout(typingTimer);
+            
+            if (!isTyping && input.value.trim()) {
+                isTyping = true;
+                sendTypingStatus(true);
+            }
+            
+            typingTimer = setTimeout(() => {
+                if (isTyping) {
+                    isTyping = false;
+                    sendTypingStatus(false);
+                }
+            }, typingDelay);
+        });
 
         // إرسال رسالة جديدة
         form.addEventListener('submit', async (e) => {
@@ -120,7 +201,6 @@
             if (!body) return;
 
             try {
-                // إرسال الـ request للـ API
                 const response = await fetch(`/api/chats/${CHAT_ID}/messages`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -133,6 +213,11 @@
                     console.log('✅ Message sent');
                     addMessage(data.data, true);
                     input.value = '';
+                    
+                    if (isTyping) {
+                        isTyping = false;
+                        sendTypingStatus(false);
+                    }
                 } else {
                     alert('Error: ' + data.message);
                 }
@@ -165,16 +250,17 @@
                         console.log(`📄 Loaded ${result.data.length} messages, has_more: ${hasMore}`);
                     }
                     
-                    const messages = result.data.reverse();
-                    
                     if (isInitialLoad) {
+                        const messages = result.data.reverse();
                         messages.forEach(msg => {
                             addMessage(msg, msg.sender.id === USER_ID);
                         });
                         isInitialLoad = false;
                     } else {
                         const oldScrollHeight = messagesDiv.scrollHeight;
-                        messages.forEach(msg => {
+                        
+                        // عشان الـ prepend بيعكس الترتيب، لازم نعكس المصفوفة مرة تانية
+                        result.data.forEach(msg => {
                             addMessage(msg, msg.sender.id === USER_ID, true);
                         });
                         
