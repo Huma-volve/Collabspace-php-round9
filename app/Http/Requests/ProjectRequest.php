@@ -22,14 +22,14 @@ class ProjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'=>'required|string',
-            'description'=>'required|string',
-            'type'=>'required|string',
-            'start_date'=>'required|date',
-            'end_date'=>'required|date|after:start_date',
-            'priority'=>'required|in:high,medium,low',
-            'status'=>'required|in:0,1',
-            
+            'name'=>'sometimes|string',
+            'description'=>'sometimes|string',
+            'type'=>'sometimes|string',
+            'start_date'=>'sometimes|date',
+            'end_date'=>'sometimes|date|after:start_date',
+            'priority'=>'sometimes|in:high,medium,low',
+            'status'=>'sometimes|in:0,1',
+
 
         ];
     }
