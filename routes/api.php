@@ -43,7 +43,10 @@ Route::get('/user', function (Request $request) {
 
 
 Route::get('/tasks',[TaskController::class,'index']);
-Route::post('/task',[TaskController::class,'store']);
+Route::post('/task', [TaskController::class, 'store']);
+Route::get('tasks/search', [TaskController::class, 'searchAnyTask']);
+Route::get('/task/{task}',[TaskController::class,'show']);
+
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
