@@ -2,13 +2,17 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Project;
 use Faker\Factory as Faker;
 use Carbon\Carbon;
+use Illuminate\Database\Seeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class ProjectSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
         $faker = Faker::create();
@@ -27,6 +31,7 @@ class ProjectSeeder extends Seeder
                 'status'      => $faker->boolean(), // 0 or 1
             ]);
         }
+
         Project::insert([
             [
                 'name' => 'Website Redesign',
