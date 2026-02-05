@@ -24,7 +24,7 @@ class ProjectController extends Controller
     }
     public function index()
     {
-        $projects = Project::with('teams')->withCount('files')->get();
+        $projects = Project::with('teams:id,name')->withCount('files')->get();
         if ($projects->isEmpty()) {
             return $this->error('No projects found at the moment.');
         }
@@ -33,14 +33,69 @@ class ProjectController extends Controller
 
     public function show($id)
     {
-        $project = Project::with('teams')->withCount('files')->find($id);
+        $project = Project::with('teams:id,name')->withCount('files')->find($id);
         if (! $project) {
             return $this->error('Project not found.');
         }
         return $this->success('Project with its team retrieved successfully.', $project);
     }
 
-    public function storeFiles(FileRequest $request, $id)
+
+
+    public function getprojectwithtasks($id)
+    {
+        $project = Project::find($id);
+        if (! $project) {
+            return $this->error('No Project Found');
+        }
+        $stats = [
+            'todo'       => Task::where('project_id', $id)->where('status', 'todo')->get(),
+            'Inprogress' => Task::where('project_id', $id)->where('status', 'progress')->get(),
+            'Inreview'   => Task::where('project_id', $id)->where('status', 'review')->get(),
+            'Completed'  => Task::where('project_id', $id)->where('status', 'completed')->get(),
+        ];
+        $projectname = $project->name;
+        $Data        = [
+            'Projectname' => $projectname,
+            'Stats'       => $stats,
+        ];
+
+        return $this->success('This is Project with Tasks', $Data);
+    }
+
+    public function getprojectwithteams($id)
+    {
+        $project = Project::select('id','name')->with('teams')
+        ->find($id);
+        if (! $project) {
+            return $this->error('No Project Found');
+        }
+
+        $data=[
+            'project'=>$project
+        ];
+        return $this->success('This is Project with Team', $data);
+    }
+
+    public function getprojectwithfiles($id)
+    {
+        $project = Project::find($id);
+        if (! $project) {
+            return $this->error('No Project Found');
+        }
+        $recentfiles = File::where('fileable_id', $id)->latest()->take(3)->get();
+        $files       = File::where('fileable_id', $id)->get();
+        $projectname = $project->name;
+        $Data        = [
+            'projectname'  => $projectname,
+            'Recent_files' => $recentfiles,
+            'All_files'    => $files,
+        ];
+        return $this->success('This is Project with Files', $Data);
+    }
+
+
+        public function storeFiles(FileRequest $request, $id)
     {
         $validated = $request->validated();
         $project   = Project::find($id);
@@ -76,58 +131,23 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function getprojectwithtasks($id)
-    {
-        $project = Project::find($id);
-        if (! $project) {
-            return $this->error('No Project Found');
+    public function update($id,ProjectRequest $projectRequest){
+        $project=Project::find($id);
+        if(!$project){
+           return $this->error('This Project Not Found');
         }
-        $stats = [
-            'todo'       => Task::where('project_id', $id)->where('status', 'todo')->get(),
-            'Inprogress' => Task::where('project_id', $id)->where('status', 'progress')->get(),
-            'Inreview'   => Task::where('project_id', $id)->where('status', 'review')->get(),
-            'Completed'  => Task::where('project_id', $id)->where('status', 'completed')->get(),
-        ];
-        $projectname = $project->name;
-        $Data        = [
-            'Projectname' => $projectname,
-            'Stats'       => $stats,
-        ];
+        $projectRequest->validated();
+        $project->update($projectRequest->all());
+       return $this->success("Updated Successfully");
 
-        return $this->success('This is Project with Tasks', $Data);
     }
 
-    public function getprojectwithteams($id)
-    {
-        $project = Project::find($id);
-        if (! $project) {
-            return $this->error('No Project Found');
+    public function delete($id){
+        $project=Project::find($id);
+        if(!$project){
+            return $this->error('This Project Not Found');
         }
-        $teams       = Team::where('project_id', $id)->get();
-        $projectname = $project->name;
-
-        $Data = [
-            'projectname' => $projectname,
-            'teams'       => $teams,
-        ];
-        return $this->success('This is Project with Team', $Data);
+        $project->delete();
+        return $this->success('Project Deleted Successfully');
     }
-
-    public function getprojectwithfiles($id)
-    {
-        $project = Project::find($id);
-        if (! $project) {
-            return $this->error('No Project Found');
-        }
-        $recentfiles = File::where('fileable_id', $id)->latest()->take(3)->get();
-        $files       = File::where('fileable_id', $id)->get();
-        $projectname = $project->name;
-        $Data        = [
-            'projectname'  => $projectname,
-            'Recent_files' => $recentfiles,
-            'All_files'    => $files,
-        ];
-        return $this->success('This is Project with Files', $Data);
-    }
-
 }

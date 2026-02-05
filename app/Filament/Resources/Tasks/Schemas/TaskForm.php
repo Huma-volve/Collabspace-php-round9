@@ -23,9 +23,9 @@ class TaskForm
                 ->relationship('project','name')
 
                 ->required(),
-                Select::make('user_id')
+                Select::make('user_id') //one to many
                 ->relationship('user','full_name')
-                
+
                 ->required()
             ]);
     }

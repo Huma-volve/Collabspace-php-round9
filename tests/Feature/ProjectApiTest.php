@@ -88,3 +88,15 @@ File::factory()->create([
 $response=$this->get("/api/projects/{$project->id}/getprojectwithfiles");
 $response->assertStatus(200);
 });
+
+test('Update Project',function(){
+$project=Project::factory()->create();
+$response=$this->post("/api/projects/{$project->id}/update");
+$response->assertStatus(200);
+});
+
+test('Delete Project',function(){
+$project=Project::factory()->create();
+$response=$this->get("/api/projects/{$project->id}/delete");
+$response->assertStatus(200);
+});

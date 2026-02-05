@@ -25,6 +25,8 @@ Route::get('/user', function (Request $request) {
 
     Route::get('/dashboard/projectsOverview', [ApiDashboardController::class, 'projectsOverview']);
 
+
+
     Route::controller(ProjectController::class)->prefix('projects')->group(function(){
     Route::post('/','store');
     Route::get('/','index');
@@ -34,16 +36,16 @@ Route::get('/user', function (Request $request) {
     Route::get('/{id}/getprojectwithteams','getprojectwithteams');
     Route::get('/{id}/getprojectwithfiles','getprojectwithfiles');
     Route::post('/{id}/addteamstoprojects','addteamstoprojects');
- Route::get('/{id}/teamswithproject','teamswithproject');
+    Route::get('/{id}/teamswithproject','teamswithproject');
+    Route::post('/{id}/update','update');
+    Route::get('/{id}/delete','delete');
 });
 
 
 Route::get('/tasks',[TaskController::class,'index']);
 Route::post('/task',[TaskController::class,'store']);
 
-// Route::get('/user', function (Request $request) {
-//     return $request->user();
-// })->middleware('auth:sanctum');
+
 
 route::prefix('meeting')->group(function(){
     route::post('/create',[MeetingController::class,'store']);
