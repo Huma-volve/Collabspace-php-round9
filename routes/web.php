@@ -9,3 +9,7 @@ Route::get('/', function () {
 Route::get('/chat-test', function () {
     return view('chat-test');
 });
+
+Route::get('/google-test', function () {
+    return view('google-test');
+});
