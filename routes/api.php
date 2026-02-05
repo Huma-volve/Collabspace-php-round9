@@ -45,6 +45,10 @@ Route::get('/user', function (Request $request) {
 Route::get('/tasks',[TaskController::class,'index']);
 Route::post('/task',[TaskController::class,'store']);
 
+// Route::get('/user', function (Request $request) {
+//     return $request->user();
+// })->middleware('auth:sanctum');
+Route::get('/zoom-token-test',[MeetingController::class,'testZoomToken']);
 
 
 route::prefix('meeting')->group(function(){
