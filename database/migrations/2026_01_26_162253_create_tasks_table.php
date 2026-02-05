@@ -21,7 +21,7 @@ return new class extends Migration
             $table->enum('status',['todo','progress','review','completed'])->default('todo');
             $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
-            $table->index(['name', 'description']);// to search
+            $table->index('name');// to search
             $table->timestamps();
         });
     }

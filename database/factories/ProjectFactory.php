@@ -3,13 +3,27 @@
 namespace Database\Factories;
 
 use App\Models\Project;
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Carbon\Carbon;
+
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Project>
+ */
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+
+
 
 class ProjectFactory extends Factory
 {
-    protected $model = Project::class;
 
+
+    protected $model = Project::class;
+ 
     public function definition(): array
     {
         $startDate = Carbon::now()->subDays(rand(1, 10));
@@ -35,5 +49,6 @@ class ProjectFactory extends Factory
             'created_at'  => now(),
             'updated_at'  => now(),
         ];
+
     }
 }

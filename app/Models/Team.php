@@ -11,7 +11,7 @@ class Team extends Model
 {
     use HasFactory;
     protected $guarded = [];
-
+protected $hidden = ['pivot'];
     public function leader(): BelongsTo
     {
         return $this->belongsTo(User::class, 'leader_id');
