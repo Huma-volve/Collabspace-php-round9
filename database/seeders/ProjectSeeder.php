@@ -17,7 +17,7 @@ class ProjectSeeder extends Seeder
 
     public function run(): void
     {
-        
+
         Project::insert([
             [
                 'name' => 'Website Redesign',
@@ -42,7 +42,7 @@ class ProjectSeeder extends Seeder
                 'description' => 'Backend APIs',
                 'type' => 'Backend',
                 'start_date' => Carbon::now(),
-                'end_date' => Carbon::now()->addMonth(),
+                'end_date' => Carbon::now()->addMonths(4),
                 'priority' => 'low',
                 'status' => 1,
             ],

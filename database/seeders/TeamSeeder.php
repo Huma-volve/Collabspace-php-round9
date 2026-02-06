@@ -35,13 +35,13 @@ class TeamSeeder extends Seeder
         // Team 1: Backend Team (Ahmed is leader)
         Team::create([
             'name' => 'Backend Team',
-            'leader_id' => $ahmed->id,
+            'leader_id' => 1,
         ]);
 
         // Team 2: Frontend Team (Sara is leader)
         Team::create([
             'name' => 'Frontend Team',
-            'leader_id' => $sara->id,
+            'leader_id' => 1,
         ]);
     }
 }

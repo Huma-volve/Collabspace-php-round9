@@ -19,6 +19,10 @@ return new class extends Migration
             $table->time('start_time');
             $table->time('end_time');
             $table->timestamps();
+            $table->string('zoom_meeting_id')->nullable(); // رقم الاجتماع في زووم
+    $table->text('start_url')->nullable();         // لينك البدء (للمحاضر فقط)
+    $table->text('join_url')->nullable();          // لينك الانضمام (للطلبة)
+    $table->string('zoom_password')->nullable();
         });
     }
 
