@@ -21,7 +21,12 @@ class UserController extends Controller
             'job_title'=>'nullable',
             'experience'=>'required|in:junior,mid,senior'
         ]);
-
+            if($request->has('image')){
+                $image=$request->image;
+                $filename=$request->full_name. '.'.time().'.'.$image->getClientOriginalExtension();
+                $path=$image->storeAs('images',$filename,'public');
+            }
+            $validated['image']=$path;
         $user=User::create($validated);
         $token=$user->createToken('auth_token')->plainTextToken;
         $token=[
@@ -45,5 +50,5 @@ class UserController extends Controller
         return $this->success('Login Successfully',$token);
     }
 
-    
+
 }

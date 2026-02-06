@@ -14,6 +14,7 @@ class UserForm
             ->components([
                  TextInput::make('full_name'),
                 TextInput::make('email'),
+                TextInput::make('password'),
                 TextInput::make('phone'),
 
                 FileUpload::make('image')
@@ -23,7 +24,7 @@ class UserForm
                 ->columnSpanFull(),
                 TextInput::make('job_title'),
                 TextInput::make('role'),
-                TextInput::make('experience')
+                TextInput::make('experience')->columnSpanFull()
             ]);
     }
 }

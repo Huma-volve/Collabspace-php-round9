@@ -22,7 +22,10 @@ class UsersTable
                 TextColumn::make('email'),
                 TextColumn::make('phone'),
 
-                ImageColumn::make('image'),
+                ImageColumn::make('image')
+                ->circular()
+                ->extraImgAttributes(['loading' => 'lazy']) 
+    ->openUrlInNewTab(),
 
                 TextColumn::make('job_title'),
                 TextColumn::make('role'),
