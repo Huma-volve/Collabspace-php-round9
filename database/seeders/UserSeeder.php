@@ -11,6 +11,7 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
+        
         User::insert([
             [
                 'full_name' => 'Admin User',

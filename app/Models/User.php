@@ -88,4 +88,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(CommentMeeting::class);
     }
+    public function getNameAttribute()
+{
+    return $this->full_name;
+}
 }
