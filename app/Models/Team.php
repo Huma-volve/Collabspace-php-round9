@@ -22,11 +22,6 @@ class Team extends Model
         return $this->hasMany(User::class);
     }
 
-    public function teams(): BelongsToMany
-    {
-        return $this->belongsToMany(Team::class);
-    }
-
     public function projects(): BelongsToMany
     {
         return $this->belongsToMany(Project::class);
