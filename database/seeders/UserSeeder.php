@@ -19,7 +19,7 @@ class UserSeeder extends Seeder
         // User 1: Ahmed (will be Backend Team leader)
         $ahmed = User::create([
             'full_name' => 'Ahmed Mohamed',
-            'email' => 'ahmed@example.com',
+            'email' => 't79861325@gmail.com',
             'password' => Hash::make('password123'),
             'phone' => '01012345678',
             'job_title' => 'Backend Developer',
@@ -35,7 +35,7 @@ class UserSeeder extends Seeder
         // User 2: Sara (will be Frontend Team leader)
         $sara = User::create([
             'full_name' => 'Sara Ali',
-            'email' => 'sara@example.com',
+            'email' => 't18472116@gmail.com',
             'password' => Hash::make('password123'),
             'phone' => '01098765432',
             'job_title' => 'Frontend Developer',

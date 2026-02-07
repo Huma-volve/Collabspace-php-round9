@@ -3,14 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;
 
+
 class GoogleAuthController extends Controller
 {
-    use ApiResponse;
 
     public function redirectToGoogle()
     {
@@ -52,16 +51,15 @@ class GoogleAuthController extends Controller
             // Create authentication token
             $token = $user->createToken('google-auth-token')->plainTextToken;
 
-            return $this->successResponse([
-                'user' => $user,
+            // Redirect to chat-test page with token and user info
+            return redirect('/chat-test?' . http_build_query([
                 'token' => $token,
-            ], 'Successfully authenticated with Google');
+                'user_id' => $user->id,
+                'user_name' => $user->full_name
+            ]));
 
         } catch (\Exception $e) {
-            return $this->errorResponse(
-                'Failed to authenticate with Google: ' . $e->getMessage(),
-                500
-            );
+            return redirect('/google-test?error=' . urlencode('Failed to authenticate with Google'));
         }
     }
 }

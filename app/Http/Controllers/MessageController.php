@@ -7,20 +7,19 @@ use App\Events\UserTyping;
 use App\Models\Chat;
 use App\Models\User;
 use App\Http\Resources\MessageResource;
-use App\Traits\MockAuth;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 
 class MessageController extends Controller
 {
-    use MockAuth, ApiResponse;
+    use ApiResponse;
     /**
      * Get all messages from a specific chat
      */
     public function index(Chat $chat)
     {
         // Verify user is member of the chat
-        if (!$chat->users->contains($this->getAuthUserId())) {
+        if (!$chat->users->contains(auth()->id())) {
             return $this->forbiddenResponse('You are not a member of this chat.');
         }
 
@@ -41,7 +40,7 @@ class MessageController extends Controller
     public function store(Request $request, Chat $chat)
     {
         // Verify user is member of the chat
-        if (!$chat->users->contains($this->getAuthUserId())) {
+        if (!$chat->users->contains(auth()->id())) {
             return $this->forbiddenResponse('You are not a member of this chat.');
         }
 
@@ -53,7 +52,7 @@ class MessageController extends Controller
             'body' => $request->body,
         ]);
 
-        $message->user_id = $this->getAuthUserId();
+        $message->user_id = auth()->id();
         $message->created_at = now();
         $message->save();
 
@@ -78,13 +77,13 @@ class MessageController extends Controller
             'is_typing' => 'required|boolean'
         ]);
 
-        $user = User::find($this->getAuthUserId());
+        $user = User::find(auth()->id());
 
         broadcast(new UserTyping(
             $chat->id,
             $user,
             $request->is_typing
-        ));
+        ))->toOthers();
 
         return $this->successResponse(
             null,

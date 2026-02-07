@@ -3,6 +3,10 @@
 use App\Models\Chat;
 use Illuminate\Support\Facades\Broadcast;
 
+Broadcast::routes([
+    'middleware' => ['auth:sanctum'],
+]);
+
 // User model channel (default)
 // Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 //     return (int) $user->id === (int) $id;
@@ -10,5 +14,6 @@ use Illuminate\Support\Facades\Broadcast;
 
 
 Broadcast::channel('chat.{chatId}', function ($user, $chatId) {
-    return Chat::find($chatId)?->users->contains(2) ?? false; // بيرجع false
+    return Chat::find($chatId)?->users->contains($user->id) ?? false;
 });
+

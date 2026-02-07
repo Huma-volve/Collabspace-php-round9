@@ -89,4 +89,46 @@ class MessageApiTest extends TestCase
             ]);
     }
 
+    // Unauthorized Access Tests
+    public function test_unauthenticated_user_cannot_get_messages()
+    {
+        // Make request without authentication
+        $response = $this->getJson('/api/chats/1/messages', [
+            'Accept' => 'application/json'
+        ]);
+
+        $response->assertStatus(401)
+            ->assertJson([
+                'message' => 'Unauthenticated.'
+            ]);
+    }
+
+    public function test_unauthenticated_user_cannot_send_message()
+    {
+        // Make request without authentication
+        $response = $this->postJson('/api/chats/1/messages', [
+            'body' => 'This should not be sent!'
+        ], [
+            'Accept' => 'application/json'
+        ]);
+
+        $response->assertStatus(401)
+            ->assertJson([
+                'message' => 'Unauthenticated.'
+            ]);
+    }
+
+    public function test_unauthenticated_user_cannot_send_typing_indicator()
+    {
+        // Make request without authentication
+        $response = $this->postJson('/api/chats/1/typing', [], [
+            'Accept' => 'application/json'
+        ]);
+
+        $response->assertStatus(401)
+            ->assertJson([
+                'message' => 'Unauthenticated.'
+            ]);
+    }
+
 }

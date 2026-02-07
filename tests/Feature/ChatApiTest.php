@@ -89,4 +89,33 @@ class ChatApiTest extends TestCase
                     ),
             ]);
     }
+
+    // Unauthorized Access Tests
+    public function test_unauthenticated_user_cannot_get_all_chats()
+    {
+        // Make request without authentication
+        $response = $this->getJson('/api/chats', [
+            'Accept' => 'application/json'
+        ]);
+
+        $response->assertStatus(401)
+            ->assertJson([
+                'message' => 'Unauthenticated.'
+            ]);
+    }
+
+    public function test_unauthenticated_user_cannot_create_chat()
+    {
+        // Make request without authentication
+        $response = $this->postJson('/api/chats', [
+            'receiver_id' => 1
+        ], [
+            'Accept' => 'application/json'
+        ]);
+
+        $response->assertStatus(401)
+            ->assertJson([
+                'message' => 'Unauthenticated.'
+            ]);
+    }
 }

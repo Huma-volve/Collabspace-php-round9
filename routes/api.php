@@ -54,17 +54,11 @@ route::prefix('meeting')->group(function(){
     route::get('/comments/{meetingId}',[MeetingController::class,'getComments']);
 });
 
-
-
 // Chat Routes
-// Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/chats', [ChatController::class, 'index']);
-
-    Route::post('/chats', [ChatController::class, 'store']);
-
-    Route::get('/chats/{chat}/messages', [MessageController::class, 'index']);
-
-    Route::post('/chats/{chat}/messages', [MessageController::class, 'store']);
-
-    Route::post('/chats/{chat}/typing', [MessageController::class, 'typing']);
-// });
+Route::middleware('auth:sanctum')->prefix('chats')->group(function () {
+    Route::get('/', [ChatController::class, 'index']);
+    Route::post('/', [ChatController::class, 'store']);
+    Route::get('/{chat}/messages', [MessageController::class, 'index']);
+    Route::post('/{chat}/messages', [MessageController::class, 'store']);
+    Route::post('/{chat}/typing', [MessageController::class, 'typing']);
+});
