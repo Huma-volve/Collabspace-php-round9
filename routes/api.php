@@ -10,12 +10,29 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\Meeting_Zoom_Controller;
 use App\Http\Controllers\API\MeetingController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\Api\ApiDashboardController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
+// Authentication Routes
+Route::prefix('auth')->group(function () {
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+    
+    Route::get('/google/redirect', [GoogleAuthController::class, 'redirectToGoogle']);
+    Route::get('/google/callback', [GoogleAuthController::class, 'handleGoogleCallback']);
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/logout', [AuthController::class, 'logout']);
+        Route::get('/user', [AuthController::class, 'user']);
+    });
+});
+
 
 
 Route::post('register',[UserController::class,'register']);
@@ -74,15 +91,11 @@ route::prefix('meeting')->group(function(){
     route::get('/comments/{meetingId}',[MeetingController::class,'getComments']);
 });
 
-
-
 // Chat Routes
-// Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/chats', [ChatController::class, 'index']);
-
-    Route::post('/chats', [ChatController::class, 'store']);
-
-    Route::get('/chats/{chat}/messages', [MessageController::class, 'index']);
-
-    Route::post('/chats/{chat}/messages', [MessageController::class, 'store']);
-// });
+Route::middleware('auth:sanctum')->prefix('chats')->group(function () {
+    Route::get('/', [ChatController::class, 'index']);
+    Route::post('/', [ChatController::class, 'store']);
+    Route::get('/{chat}/messages', [MessageController::class, 'index']);
+    Route::post('/{chat}/messages', [MessageController::class, 'store']);
+    Route::post('/{chat}/typing', [MessageController::class, 'typing']);
+});

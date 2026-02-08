@@ -3,6 +3,8 @@
 namespace App\Traits;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /**
  * ApiResponse Trait
@@ -21,11 +23,42 @@ trait ApiResponse
      */
     protected function successResponse($data = null, string $message = 'Success', int $code = 200): JsonResponse
     {
-        return response()->json([
+        $response = [
             'success' => true,
             'message' => $message,
-            'data' => $data
-        ], $code);
+            'data' => $data,
+        ];
+
+        // Resource collection with CursorPaginator (MessageResource::collection($cursorPaginator))
+        if ($data instanceof AnonymousResourceCollection && $data->resource instanceof \Illuminate\Pagination\CursorPaginator) {
+            $paginator = $data->resource;
+            $response['data'] = $data->resolve();
+            $response['pagination'] = [
+                'next_cursor' => $paginator->nextCursor()?->encode(),
+                'prev_cursor' => $paginator->previousCursor()?->encode(),
+                'has_more' => $paginator->nextCursor() !== null,
+            ];
+
+            return response()->json($response, $code);
+        }
+
+        // Resource collection with LengthAwarePaginator (MessageResource::collection($paginator))
+        if ($data instanceof AnonymousResourceCollection && $data->resource instanceof LengthAwarePaginator) {
+            $paginator = $data->resource;
+            $response['data'] = $data->resolve();
+            $response['pagination'] = [
+                'current_page' => $paginator->currentPage(),
+                'last_page'    => $paginator->lastPage(),
+                'per_page'     => $paginator->perPage(),
+                'total'        => $paginator->total(),
+                'has_more'     => $paginator->hasMorePages(),
+            ];
+
+            return response()->json($response, $code);
+        }
+
+        // fallback: لو جاي array/collection/primitive — نسيبها كما هي
+        return response()->json($response, $code);
     }
     
     /**

@@ -5,20 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\Chat;
 use App\Models\User;
 use App\Http\Resources\ChatResource;
-use App\Traits\MockAuth;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ChatController extends Controller
 {
-    use MockAuth, ApiResponse;
+    use ApiResponse;
     /**
      * Get all chats for the authenticated user
      */
     public function index()
     {
-        $chats = $this->getAuthUser()->chats()
+        $chats = auth()->user()->chats()
             ->with([
                 'users:id,full_name,image,experience,team_id',
                 'users.team:id,name',
@@ -41,10 +40,10 @@ class ChatController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'receiver_id' => 'required|exists:users,id|different:' . $this->getAuthUserId()
+            'receiver_id' => 'required|exists:users,id|different:' . auth()->id()
         ]);
 
-        $currentUser = $this->getAuthUser();
+        $currentUser = auth()->user();
         $receiverId = $request->receiver_id;
         if($currentUser->id == $receiverId){
             return $this->errorResponse('You cannot chat with yourself', 400);
@@ -101,8 +100,7 @@ class ChatController extends Controller
         try {
             $receiver = User::findOrFail($receiverId);
 
-            $chat = Chat::create([
-            ]);
+            $chat = Chat::create();
 
             // Attach both users to the chat
             $chat->users()->attach([$currentUser->id, $receiverId]);

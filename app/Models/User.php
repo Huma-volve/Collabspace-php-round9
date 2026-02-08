@@ -17,14 +17,27 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends  Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable,HasApiTokens;
+    use HasFactory, Notifiable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
      */
-    protected $guarded = [];
+    protected $fillable = [
+        'full_name',
+        'email',
+        'password',
+        'google_id',
+        'email_verified_at',
+        'image',
+        'about',
+        'experience_year',
+        'phone',
+        'status',
+        'job_title',
+        'team_id'
+    ];
 
     /**
      * The attributes that should be hidden for serialization.
