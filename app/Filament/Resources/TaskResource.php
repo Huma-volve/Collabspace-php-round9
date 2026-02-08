@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Filament\Resources;
-
 use App\Filament\Resources\TaskResource\Pages;
 use App\Filament\Resources\TaskResource\RelationManagers;
 use App\Models\Task;
@@ -13,6 +12,8 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\TaskResource\RelationManagers\FilesRelationManager;
+use App\Filament\Resources\TaskResource\RelationManagers\UsersRelationManager;
+use Filament\Tables\Columns\TextColumn;
 class TaskResource extends Resource
 {
     protected static ?string $model = Task::class;
@@ -29,12 +30,15 @@ class TaskResource extends Resource
                      ->visible(fn (? \App\Models\Task $record) => $record === null),
                 Forms\Components\TextInput::make('name')
                     ->required()
+                 ->nullable()
                     ->maxLength(191),
                 Forms\Components\Textarea::make('description')
                     ->required()
+                 ->nullable()
                     ->columnSpanFull(),
                 Forms\Components\DatePicker::make('start_date')
-                    ->required(),
+                    ->required()
+                 ->nullable(),
                 Forms\Components\DatePicker::make('end_date')
                     ->required(),
                 Forms\Components\Select::make('priority')
@@ -48,8 +52,9 @@ class TaskResource extends Resource
                 Forms\Components\Select::make('status')
                     ->label('Status')
                     ->options([
-                        'pending'    => 'Pending',
-                        'in_progress' => 'In Progress',
+                        'todo'    => 'Todo',
+                        'progress' => 'In Progress',
+                        'review'   => 'Review',
                         'completed'   => 'Completed',
                     ])
                 ->required(),
@@ -59,9 +64,11 @@ class TaskResource extends Resource
                     ->preload()
                     ->required(),
                 Forms\Components\Select::make('user_id')
+                    ->label('Assigned User')
                     ->relationship('user', 'full_name')
                     ->searchable()
                     ->preload()
+                    ->required(),
             ]);
     }
 
@@ -89,9 +96,16 @@ class TaskResource extends Resource
                 Tables\Columns\TextColumn::make('project.name')
                     ->sortable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('user_id')
+                Tables\Columns\TextColumn::make('user.full_name')
+                ->label('Assigned User')
                     ->sortable()
                     ->toggleable(),
+                    TextColumn::make('files_count')
+                        ->counts('files')
+                        ->label('Files'),
+                        TextColumn::make('comments_count')
+                        ->counts('comments')
+                        ->label('Comments'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -118,6 +132,7 @@ class TaskResource extends Resource
     {
         return [
             FilesRelationManager::class,
+            // UsersRelationManager::class,
         ];
     }
 

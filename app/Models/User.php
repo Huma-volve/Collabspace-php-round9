@@ -92,4 +92,18 @@ class User extends Authenticatable
 {
     return $this->full_name;
 }
+protected $casts = [
+    'email_verified_at' => 'datetime',
+];
+
+public function setEmailVerifiedAtAttribute($value)
+{
+    if (!$value || strtotime($value) < strtotime('1970-01-01')) {
+        $this->attributes['email_verified_at'] = null;
+        return;
+    }
+
+    $this->attributes['email_verified_at'] = $value;
+}
+
 }

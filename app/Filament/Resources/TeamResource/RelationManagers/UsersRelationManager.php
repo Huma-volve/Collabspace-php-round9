@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\ProjectResource\RelationManagers;
+namespace App\Filament\Resources\TeamResource\RelationManagers;
 
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -9,39 +9,31 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Forms\Components\FileUpload;
-class FilesRelationManager extends RelationManager
+
+class UsersRelationManager extends RelationManager
 {
-    protected static string $relationship = 'files';
+    protected static string $relationship = 'users';
 
     public function form(Form $form): Form
     {
         return $form
             ->schema([
-FileUpload::make('url')
-    ->disk('public')
-    ->directory('projects')
-    ->visibility('public')
-    ->preserveFilenames()
-    ->openable()
-->downloadable()
-    ->required(),
+                Forms\Components\Select::make('users')
+                ->relationship('users', 'full_name')
+                ->label('User')
+                ->multiple()
+                ->preload()
+                ->searchable()
+                ->required()
             ]);
     }
 
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('url')
+            ->recordTitleAttribute('full_name')
             ->columns([
-               Tables\Columns\TextColumn::make('url')
-                    ->label('File')
-                    ->formatStateUsing(fn ($state) => basename($state))
-                    ->searchable(),
-
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('full_name'),
             ])
             ->filters([
                 //

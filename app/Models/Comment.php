@@ -24,4 +24,5 @@ protected $guarded = [];
     {
         return $this->hasMany(Reply::class);
     }
+    
 }

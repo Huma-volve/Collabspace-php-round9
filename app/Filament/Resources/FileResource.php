@@ -49,10 +49,10 @@ class FileResource extends Resource
                     ->formatStateUsing(fn ($state) => class_basename($state))
                     ->badge(),
 
-                Tables\Columns\TextColumn::make('uploaded_by')
-                    ->label('Uploader')
-                    ->formatStateUsing(fn ($record) => $record->uploader?->full_name)
-                    ->sortable(),
+               Tables\Columns\TextColumn::make('uploader.full_name')
+    ->label('Uploaded By')
+    ->sortable()
+    ->searchable(),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

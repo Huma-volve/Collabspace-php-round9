@@ -27,7 +27,6 @@ class CommentResource extends Resource
             ->schema([
                 Forms\Components\Textarea::make('content')
                     ->required()
-                    ->toggleable()
                     ->columnSpanFull(),
                FileUpload::make('image')
                     ->image()
@@ -37,14 +36,11 @@ class CommentResource extends Resource
                 Forms\Components\Select::make('user_id')
                     ->relationship('user', 'full_name')
                     ->searchable()
-                    ->preload()
-                    ->toggleable(),
+                    ->preload(),
                 Forms\Components\Select::make('task_id')
                     ->relationship('task', 'name')
                     ->searchable()
                     ->preload()
-                    ->toggleable()
-                    ->required()
                     ->required(),
             ]);
     }
@@ -100,5 +96,9 @@ class CommentResource extends Resource
             'edit' => Pages\EditComment::route('/{record}/edit'),
         ];
     }
-    
+    public static function getEloquentQuery(): Builder
+{
+    return parent::getEloquentQuery()->with('user');
+}
+
 }

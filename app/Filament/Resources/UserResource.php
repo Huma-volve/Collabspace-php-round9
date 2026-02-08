@@ -30,7 +30,14 @@ class UserResource extends Resource
                     ->email()
                     ->required()
                     ->maxLength(191),
-                Forms\Components\DateTimePicker::make('email_verified_at'),
+                Forms\Components\DateTimePicker::make('email_verified_at')
+                 ->nullable()
+                    ->maxDate(now())
+                    ->rule('after:1970-01-01')
+                    ->validationMessages([
+                        'after' => 'Date must be after January 1, 1970',
+                        'before_or_equal' => 'Date cannot be in the future',
+                    ]),
                 Forms\Components\TextInput::make('password')
                     ->password()
                     ->required(fn (string $context): bool => $context === 'create')
@@ -42,10 +49,12 @@ class UserResource extends Resource
                     ->image()
                     ->disk('public')
                     ->directory('users')
-                    ->visibility('public'),
+                    ->visibility('public')
+                    ->required(),
                 Forms\Components\TextInput::make('job_title')
                     ->maxLength(191),
                 Select::make('role')
+                    ->required()
                     ->label('Role')
                     ->options([
                         'admin'    => 'Admin',
@@ -53,6 +62,7 @@ class UserResource extends Resource
                     ])
                 ->required(),
                 Select::make('status')
+                    ->required()
                     ->label('Account Status')
                     ->options([
                         1 => 'Active',
@@ -81,6 +91,7 @@ class UserResource extends Resource
                 Forms\Components\TextInput::make('experience_year')
                     ->numeric(),
                 Forms\Components\Select::make('team_id')
+                    ->required()
                     ->relationship('team', 'name'),
             ]);
     }
@@ -140,6 +151,15 @@ class UserResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                    Tables\Columns\TextColumn::make('comments_count')
+                    ->counts('comments')
+                    ->label('Comments'),
+                    Tables\Columns\TextColumn::make('meetings.subject')
+                    ->label('Meetings')
+                    ->toggleable(),
+                    Tables\Columns\TextColumn::make('tasks.name')
+                    ->label('Tasks')
+                    ->toggleable(),
             ])->searchDebounce('750ms')
             ->filters([
                 //

@@ -82,6 +82,14 @@ class ProjectResource extends Resource
                 Tables\Columns\IconColumn::make('status')
                     ->boolean()
                     ->toggleable(),
+                    Tables\Columns\TextColumn::make('files_count')
+                    ->counts('files')
+                    ->label('Files')
+                    ->toggleable(),
+                     Tables\Columns\TextColumn::make('tasks.name')
+                    ->label('Tasks')
+                    ->toggleable(),
+                    
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

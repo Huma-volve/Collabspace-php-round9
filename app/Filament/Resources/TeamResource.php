@@ -25,11 +25,13 @@ class TeamResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->required()
+                 ->nullable()
                     ->maxLength(191),
                Forms\Components\Select::make('leader_id')
                     ->label('Leader')
                     ->relationship('leader', 'full_name')
                     ->searchable()
+                 ->nullable()
                     ->preload()
                     ->required(),
                      ]); 
@@ -48,6 +50,16 @@ class TeamResource extends Resource
                     ->label('Leader')
                     ->sortable()
                     ->searchable(),
+                    Tables\Columns\ImageColumn::make('users.image')
+                    ->label('Members')
+                    // ->separator(', ')
+                    ->toggleable()
+                    ->disk('public')
+                    ->visibility('public')
+                    ->height(60)
+                    ->square(), 
+                    Tables\Columns\TextColumn::make('projects.name')
+                    ->label('Projects'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -73,7 +85,7 @@ class TeamResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+                RelationManagers\UsersRelationManager::class,
         ];
     }
 
