@@ -2,12 +2,19 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\User;
-use App\Models\Project;
+
 use App\Models\Task;
+use App\Models\User;
 use App\Models\Comment;
+use App\Models\Project;
+
+
+use Illuminate\Database\Seeder;
+use Database\Seeders\ProjectSeeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,17 +23,24 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Run seeders in correct order:
-        // 1. Create users first
-        $this->call(UserSeeder::class);
-        
-        // 2. Create teams (needs users as leaders)
-        $this->call(TeamSeeder::class);
-        
-        // 3. Create chats
-        $this->call(ChatSeeder::class);
-        
-        // 4. Create messages
-        $this->call(MessageSeeder::class);
-    }
+        // User::factory(10)->create();
+
+        // User::factory()->create([
+        //     'name' => 'Test User',
+        //     'email' => 'test@example.com',
+        // ]);
+       Project::factory(10)->create();
+
+
+    $this->call([
+        UserSeeder::class,
+        TeamSeeder::class,
+        ProjectSeeder::class,
+        TaskSeeder::class,
+        ProjectTeamSeeder::class,
+        MeetingSeeder::class,
+        FileSeeder::class,
+    ]);
+}
+
 }

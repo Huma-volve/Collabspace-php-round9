@@ -20,4 +20,11 @@ class ExampleTest extends TestCase
     {
         $this->assertEquals(3, \App\Models\User::count());
     }
+
+    public function testApplicationReturnsSuccessfulResponse()
+    {
+        $response = $this->get('/');
+
+        $response->assertStatus(200);
+    }
 }

@@ -34,6 +34,13 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    
+    'zoom' => [
+    'account_id' => env('ZOOM_ACCOUNT_ID'),
+    'client_id' => env('ZOOM_CLIENT_ID'),
+    'client_secret' => env('ZOOM_CLIENT_SECRET'),
+],
+
 
     'google' => [
         'client_id' => env('GOOGLE_CLIENT_ID'),

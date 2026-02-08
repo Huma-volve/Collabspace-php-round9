@@ -11,10 +11,11 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Project extends Model
 {
-  use HasFactory;
 
+
+    use HasFactory;
 protected $guarded = [];
-    
+
     public function files(): MorphMany {
         return $this->morphMany(File::class, 'fileable');
     }
@@ -29,5 +30,8 @@ protected $guarded = [];
 
     public function getStatusTextAttribute(){
         return $this->status==0?'active':'done';
+    }
+    public function getuppercase(){
+        return strtoupper($this->name);
     }
 }
