@@ -45,6 +45,7 @@ class ProjectResource extends Resource
             'index' => ListProjects::route('/'),
             'create' => CreateProject::route('/create'),
             'edit' => EditProject::route('/{record}/edit'),
+            
         ];
     }
 }
