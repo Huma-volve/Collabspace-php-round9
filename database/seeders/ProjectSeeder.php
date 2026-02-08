@@ -43,6 +43,8 @@ class ProjectSeeder extends Seeder
                 'end_date' => Carbon::now()->addMonth(),
                 'priority' => 'high',
                 'status' => 1,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ],
             [
                 'name' => 'Mobile App',
@@ -52,6 +54,8 @@ class ProjectSeeder extends Seeder
                 'end_date' => Carbon::now()->addMonths(2),
                 'priority' => 'medium',
                 'status' => 1,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ],
             [
                 'name' => 'API Development',
@@ -61,6 +65,8 @@ class ProjectSeeder extends Seeder
                 'end_date' => Carbon::now()->addMonth(),
                 'priority' => 'low',
                 'status' => 1,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ],
         ]);
     }

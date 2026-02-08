@@ -10,6 +10,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\Meeting_Zoom_Controller;
 use App\Http\Controllers\API\MeetingController;
+use App\Http\Controllers\Api\ApiFileController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\Api\ProjectController;
@@ -51,6 +52,8 @@ Route::post('login',[UserController::class,'login']);
     Route::get('/dashboard/teams', [ApiDashboardController::class, 'teams']);
     Route::get('/dashboard/files', [ApiDashboardController::class, 'files']);
     Route::get('/dashboard/tasks/tasksCompletionRateByDeadline', [ApiDashboardController::class, 'tasksCompletionRateByDeadline']);
+    Route::get('/files/{file}/download', [ApiFileController::class, 'download'])
+    ->name('files.download');
 
     Route::get('/dashboard/projectsOverview', [ApiDashboardController::class, 'projectsOverview']);
 

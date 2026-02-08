@@ -3,25 +3,24 @@
 namespace Database\Factories;
 
 use App\Models\Meeting;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\User;
 
+class MeetingFactory extends Factory
+{
+    protected $model = Meeting::class;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Meeting>
  */
-class MeetingFactory extends Factory
-{
     /**
      * Define the model's default state.
      *
      * @return array<string, mixed>
      */
-
-    protected $model=Meeting::class;
     public function definition(): array
     {
         return [
-                   'subject' => $this->faker->sentence,
+         'subject' => $this->faker->sentence,
 
         'date' => $this->faker->date(),
         'note' => $this->faker->paragraph(),
