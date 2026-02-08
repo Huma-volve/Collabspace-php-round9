@@ -6,18 +6,17 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('meetings', function (Blueprint $table) {
             $table->id();
             $table->string('subject');
-            $table->text('note');
+            $table->text('note')->nullable();
             $table->date('date');
             $table->time('start_time');
-            $table->time('end_time');
+            $table->integer('duration')->nullable();
+            $table->string('zoom_meeting_id', 50)->nullable();
+            $table->text('join_url')->nullable();
             $table->timestamps();
             $table->string('zoom_meeting_id')->nullable(); // رقم الاجتماع في زووم
     $table->text('start_url')->nullable();         // لينك البدء (للمحاضر فقط)
@@ -26,11 +25,9 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('meetings');
     }
 };
+

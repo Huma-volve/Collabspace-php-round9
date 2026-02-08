@@ -19,18 +19,19 @@ class MeetingRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
-    {
-        return [
-                'subject'=>'required|string',
-                'date'=>'required|date',
-                'start_time'=>'required|date_format:H:i',
-                'end_time'=>'required|date_format:H:i|after:start-time',
-                'note'=>'nullable|string',
-                'users' => 'required|array',
-                'users.*' => 'exists:users,id',
-        ];
-    }
+  public function rules(): array
+{
+    return [
+        'subject'    => 'required|string|max:255',
+        'date'       => 'required|date|after_or_equal:today',
+        'start_time' => 'required|date_format:H:i',
+        'duration'   => 'nullable|integer|min:5|max:1440',
+        'note'       => 'nullable|string',
+        'users'      => 'nullable|array',
+        'users.*'    => 'exists:users,id',
+    ];
+}
+
 
     public function messages(): array
     {
