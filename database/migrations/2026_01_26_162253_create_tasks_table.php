@@ -11,20 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-            Schema::create('tasks', function (Blueprint $table) {
-                $table->id();
-                $table->string('name');
-                $table->text('description');
-                $table->date('start_date');
-                $table->date('end_date');
-                $table->enum('priority',['high','medium','low'])->default('low');
-                $table->enum('status',['todo','progress','review','completed'])->default('todo');
-                $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
-                $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
-                $table->index(['name']);// to search
-                $table->timestamps();
-            });
         }
+        Schema::create('tasks', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->text('description');
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->enum('priority',['high','medium','low'])->default('low');
+            $table->enum('status',['todo','progress','review','completed'])->default('todo');
+            $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
+            $table->index('name');// to search
+            $table->timestamps();
+        });
+    }
 
     /**
      * Reverse the migrations.
