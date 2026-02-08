@@ -2,9 +2,12 @@
 
 namespace App\Filament\Resources\Tasks\Schemas;
 
+use App\Models\Task;
+use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Schema;
+use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\MorphToSelect\Type;
 
 class TaskForm
 {
@@ -24,9 +27,10 @@ class TaskForm
 
                 ->required(),
                 Select::make('user_id') //one to many
-                ->relationship('user','full_name')
+                ->relationship('user','full_name'),
 
-                ->required()
+
+             
             ]);
     }
 }

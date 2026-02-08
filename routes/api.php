@@ -1,18 +1,30 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\ApiDashboardController;
-use App\Http\Controllers\MessageController;
-use App\Http\Controllers\ChatController;
-use App\Http\Controllers\Api\ProjectController;
 use App\Models\Task;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\Meeting_Zoom_Controller;
 use App\Http\Controllers\API\MeetingController;
+use App\Http\Controllers\Api\ProjectController;
+use App\Http\Controllers\Api\ApiDashboardController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
+
+Route::post('register',[UserController::class,'register']);
+Route::post('login',[UserController::class,'login']);
+
+
+    Route::post('/meetings', [Meeting_Zoom_Controller::class, 'store']);
+
+
 
 
     Route::get('dashboard/task_stats', [ApiDashboardController::class, 'task_stats']);
@@ -27,7 +39,7 @@ Route::get('/user', function (Request $request) {
 
 
 
-    Route::controller(ProjectController::class)->prefix('projects')->group(function(){
+    Route::middleware('auth:sanctum')->controller(ProjectController::class)->prefix('projects')->group(function(){
     Route::post('/','store');
     Route::get('/','index');
     Route::get('/{id}','show')->name('show');
@@ -37,8 +49,8 @@ Route::get('/user', function (Request $request) {
     Route::get('/{id}/getprojectwithfiles','getprojectwithfiles');
     Route::post('/{id}/addteamstoprojects','addteamstoprojects');
     Route::get('/{id}/teamswithproject','teamswithproject');
-    Route::post('/{id}/update','update');
-    Route::get('/{id}/delete','delete');
+    Route::put('/{id}/update','update');
+    Route::delete('/{id}/delete','delete');
 });
 
 
