@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTaskRequest;
+use App\Http\Resources\TaskResource;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -12,24 +13,16 @@ class TaskController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
         $tasks = Task::with([
             'project',
             'comments',
             'files',
-        ])->latest();
+        ])->latest()->get();
 
-        if ($request->filled('search')) {
-            $tasks->whereFullText(['name', 'description'], $request->search);
-        }
 
-        $tasks = $tasks->latest()->get();
-
-        return response()->json([
-            'message' => 'Tasks retrieved successfully',
-            'data'    => $tasks
-        ]);
+        return TaskResource::collection($tasks);
     }
 
 
@@ -72,15 +65,26 @@ class TaskController extends Controller
             'comments.user', // لو الكومنت له يوزر
             'files',
         ]);
-        return response()->json($task);
+        return new TaskResource($task);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Task $task)
+
+    public function searchAnyTask(Request $request)
     {
-        //
+
+        $request->validate([
+            'q' => 'required|string|min:2',
+        ]);
+        $q = $request->query('q');
+
+        $tasks = Task::where('name', 'like', "%{$q}%")
+            ->orWhere('description', 'like', "%{$q}%")
+            ->with('files')
+            ->get();
+        return TaskResource::collection($tasks);
     }
 
     /**
