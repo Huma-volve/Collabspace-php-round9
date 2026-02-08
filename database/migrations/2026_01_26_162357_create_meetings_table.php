@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
-{
+{//ss
     public function up(): void
     {
         Schema::create('meetings', function (Blueprint $table) {
