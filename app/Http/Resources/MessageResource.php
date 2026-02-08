@@ -20,7 +20,7 @@ class MessageResource extends JsonResource
             'sender' => $this->whenLoaded('user', function () {
                 return [
                     'id' => $this->user->id,
-                    'name' => $this->user->name,
+                    'full_name' => $this->user->full_name,
                 ];
             }),
             'chat_id' => $this->chat_id,
