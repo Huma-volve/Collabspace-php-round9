@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Message extends Model
 {
-protected $guarded = [];
+    protected $fillable = ['body'];
 
     public function chat(): BelongsTo
     {
