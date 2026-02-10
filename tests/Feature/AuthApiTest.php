@@ -54,7 +54,7 @@ class AuthApiTest extends TestCase
     {
         // Using seeded user from UserSeeder
         $response = $this->postJson('/api/auth/login', [
-            'email' => 'ahmed@example.com',
+            'email' => 't79861325@gmail.com',
             'password' => 'password123',
         ]);
 
